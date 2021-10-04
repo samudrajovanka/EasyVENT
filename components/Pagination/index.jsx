@@ -1,6 +1,7 @@
 import PaginationBox from '@components/PaginationBox';
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import PropTypes from 'prop-types';
 
 export default function Pagination({
   pageActive, endPage, leftClick, rightClick, pageClick,
@@ -43,3 +44,11 @@ export default function Pagination({
     </div>
   );
 }
+
+Pagination.propTypes = {
+  pageActive: PropTypes.number.isRequired,
+  endPage: PropTypes.number.isRequired,
+  leftClick: PropTypes.func.isRequired,
+  rightClick: PropTypes.func.isRequired,
+  pageClick: PropTypes.func.isRequired,
+};

@@ -28,6 +28,7 @@ PaginationBox.defaultProps = {
 };
 
 PaginationBox.propTypes = {
+  children: PropTypes.node.isRequired,
   active: PropTypes.bool,
   onClick: PropTypes.func.isRequired,
 };

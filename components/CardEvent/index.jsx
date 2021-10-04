@@ -4,7 +4,6 @@ import { faCalendarAlt } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import rupiahFormat from '@lib/currencyFormat';
 import fetchData from '@lib/fetchData';
-// import users from 'data/users';
 import moment from 'moment';
 import Image from 'next/image';
 
@@ -39,13 +38,13 @@ export default function CardEvent({ event }) {
         </div>
 
         <div className="p-4">
-          <div className="flex flex-col gap-2">
+          <header className="flex flex-col gap-2">
             <h1 className="line-clamp-2 font-bold">{event.eventName}</h1>
             <div className="flex gap-3">
               <Badge>{event.fee === 0 ? 'Free' : rupiahFormat(event.fee)}</Badge>
               <Badge>{event.eventType}</Badge>
             </div>
-          </div>
+          </header>
 
           <div className="flex items-center pt-5 gap-2">
             <FontAwesomeIcon icon={faCalendarAlt} />
