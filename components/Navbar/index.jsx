@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 export default function Navbar() {
   return (
-    <nav className="w-full py-3 border-b-2 border-ev-gray px-48">
+    <nav className="sticky top-0 bg-white w-full py-3 border-b-2 border-ev-gray px-48">
       <div className="flex justify-between items-center">
         <Link href="/">
           <a>
