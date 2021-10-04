@@ -1,15 +1,14 @@
 import Container from '@components/Container';
 import Footer from '@components/Footer';
 import Navbar from '@components/Navbar';
+import PropTypes from 'prop-types';
 
 export default function Layout({ children }) {
   return (
     <>
-      <header>
-        <Navbar />
-      </header>
+      <Navbar />
 
-      <main className="text-ev-black">
+      <main>
         <Container>
           {children}
         </Container>
@@ -19,3 +18,7 @@ export default function Layout({ children }) {
     </>
   );
 }
+
+Layout.propTypes = {
+  children: PropTypes.node.isRequired,
+};

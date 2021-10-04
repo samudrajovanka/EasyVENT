@@ -15,7 +15,7 @@ class MyDocument extends Document {
           <meta name="description" content="EasyVENT makes it easy for you to spread your events" />
           <link rel="icon" href="/favicon.ico" />
         </Head>
-        <body>
+        <body className="text-ev-black">
           <Main />
           <NextScript />
         </body>
