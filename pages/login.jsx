@@ -1,6 +1,7 @@
 import Button from '@components/Button';
 import Card from '@components/Card';
 import LabelInput from '@components/LabelInput';
+import Title from '@components/Title';
 import fetchData from '@lib/fetchData';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/dist/client/router';
@@ -26,20 +27,25 @@ export default function LoginPage() {
 
   const handleLogin = (e) => {
     e.preventDefault();
+    let isValid = true;
 
     if (username === '') {
       setErrorMessage('username', 'Username is required');
+      isValid = false;
     } else {
       setErrorMessage('username', '');
+      isValid = true;
     }
 
     if (password === '') {
       setErrorMessage('password', 'Password is required');
+      isValid = false;
     } else {
       setErrorMessage('password', '');
+      isValid = true;
     }
 
-    if (username !== '' && password !== '') {
+    if (isValid) {
       const user = fetchData.login(username, password);
 
       if (user) {
@@ -56,8 +62,8 @@ export default function LoginPage() {
 
   return (
     <form className="flex justify-center" onSubmit={(e) => handleLogin(e)} noValidate>
-      <Card width="w-5/12" padding="p-8" gap="gap-10">
-        <h1 className="font-bold text-2xl">Login</h1>
+      <Card width="w-6/12" padding="p-8" gap="gap-10">
+        <Title>Login</Title>
 
         <div className="flex flex-col gap-4">
           {error.login && <p className="text-ev-red">{error.login}</p>}
