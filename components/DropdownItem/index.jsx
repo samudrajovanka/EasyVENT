@@ -8,6 +8,7 @@ export default function DropdownItem({ children, href, onClick }) {
       <Link href={href}>
         <a
           className={`block px-3 py-2 bg-white hover:bg-ev-gray ${styles['dropdown-item']}`}
+          onClick={onClick}
         >
           {children}
         </a>
@@ -27,11 +28,10 @@ export default function DropdownItem({ children, href, onClick }) {
 
 DropdownItem.defaultProps = {
   href: null,
-  onClick: null,
 };
 
 DropdownItem.propTypes = {
   children: PropTypes.node.isRequired,
   href: PropTypes.string,
-  onClick: PropTypes.func,
+  onClick: PropTypes.func.isRequired,
 };

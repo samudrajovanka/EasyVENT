@@ -8,24 +8,49 @@ import Image from 'next/image';
 import { faPlusSquare } from '@fortawesome/free-regular-svg-icons';
 import Dropdown from '@components/Dropdown';
 import DropdownItem from '@components/DropdownItem';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/dist/client/router';
 
 export default function Navbar() {
-  const login = Cookies.get('login');
-  const avatar = Cookies.get('avatar');
+  const [login, setLogin] = useState(false);
+  const [avatar, setAvatar] = useState('/images/avatar/default-avatar.jpg');
+  const [loading, setLoading] = useState(true);
   const [isOpenDropdown, setIsOpenDropdown] = useState(false);
   const router = useRouter();
+  const dropdown = useRef(null);
+
+  useEffect(() => {
+    setLogin(Boolean(Cookies.get('login')));
+    setAvatar(Cookies.get('avatar'));
+    setLoading(false);
+  }, [Cookies.get('login')]);
+
+  useEffect(() => {
+    if (!isOpenDropdown) return;
+
+    function handleClick(event) {
+      if (dropdown.current && !dropdown.current.contains(event.target)) {
+        setIsOpenDropdown(false);
+      }
+    }
+
+    window.addEventListener('click', handleClick);
+
+    // eslint-disable-next-line consistent-return
+    return () => {
+      window.removeEventListener('click', handleClick);
+    };
+  }, [isOpenDropdown]);
+
+  const toggleDropdown = () => {
+    setIsOpenDropdown((current) => !current);
+  };
 
   const handleLogout = () => {
     Cookies.remove('login');
     Cookies.remove('avatar');
-    setIsOpenDropdown(false);
+    toggleDropdown();
     router.replace('/');
-  };
-
-  const toggleDropdown = () => {
-    setIsOpenDropdown((current) => !current);
   };
 
   return (
@@ -44,7 +69,7 @@ export default function Navbar() {
           <a><FontAwesomeIcon icon={faSearch} /></a>
         </Link>
 
-        {login && (
+        {login && !loading && (
           <>
             <Link href="/create">
               <a><FontAwesomeIcon icon={faPlusSquare} /></a>
@@ -62,10 +87,12 @@ export default function Navbar() {
               </button>
 
               {isOpenDropdown && (
-                <Dropdown>
-                  <DropdownItem href="/profile">Profile</DropdownItem>
-                  <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
-                </Dropdown>
+                <div ref={dropdown}>
+                  <Dropdown>
+                    <DropdownItem href="/profile" onClick={toggleDropdown}>Profile</DropdownItem>
+                    <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
+                  </Dropdown>
+                </div>
               )}
             </div>
           </>

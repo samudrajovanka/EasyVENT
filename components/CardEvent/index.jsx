@@ -8,8 +8,7 @@ import moment from 'moment';
 import Image from 'next/image';
 
 export default function CardEvent({ event }) {
-  const user = fetchData.getUser(event.owner);
-  // const user = users.find((user) => user.username === event.owner);
+  const user = fetchData.getUserByUsername(event.owner);
   const dateTime = moment(event.startDateTime).format('dddd, DD MMM YYYY | HH:mm');
 
   return (
