@@ -14,6 +14,7 @@ import { useRouter } from 'next/dist/client/router';
 export default function Navbar() {
   const [login, setLogin] = useState(false);
   const [avatar, setAvatar] = useState('/images/avatar/default-avatar.jpg');
+  const [username, setUsername] = useState(Cookies.get('username'));
   const [loading, setLoading] = useState(true);
   const [isOpenDropdown, setIsOpenDropdown] = useState(false);
   const router = useRouter();
@@ -22,6 +23,7 @@ export default function Navbar() {
   useEffect(() => {
     setLogin(Boolean(Cookies.get('login')));
     setAvatar(Cookies.get('avatar'));
+    setUsername(Cookies.get('username'));
     setLoading(false);
   }, [Cookies.get('login')]);
 
@@ -89,7 +91,7 @@ export default function Navbar() {
               {isOpenDropdown && (
                 <div ref={dropdown}>
                   <Dropdown>
-                    <DropdownItem href="/profile" onClick={toggleDropdown}>Profile</DropdownItem>
+                    <DropdownItem href={`/${username}`} onClick={toggleDropdown}>Profile</DropdownItem>
                     <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
                   </Dropdown>
                 </div>

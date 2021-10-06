@@ -7,26 +7,28 @@ import fetchData from '@lib/fetchData';
 import moment from 'moment';
 import Image from 'next/image';
 
-export default function CardEvent({ event }) {
+export default function CardEvent({ event, noHeader }) {
   const user = fetchData.getUserByUsername(event.owner);
   const dateTime = moment(event.startDateTime).format('dddd, DD MMM YYYY | HH:mm');
 
   return (
     <div>
-      <div className="flex flex-col border border-ev-gray rounded hover:shadow-xl cursor-pointer">
-        <div className="flex items-center gap-3 p-4">
-          <div className="relative h-10 w-10 rounded-full overflow-hidden">
-            <Image
-              src={user.avatar}
-              layout="fill"
-              loading="lazy"
-            />
+      <div className="flex flex-col border border-ev-gray rounded hover:shadow-xl cursor-pointer overflow-hidden">
+        {!noHeader && (
+          <div className="flex items-center gap-3 p-4">
+            <div className="relative h-10 w-10 rounded-full overflow-hidden">
+              <Image
+                src={user.avatar}
+                layout="fill"
+                loading="lazy"
+              />
+            </div>
+            <div className="flex flex-col">
+              <p className="text-lg">{user.name}</p>
+              <p className="text-ev-dark-gray">{user.username}</p>
+            </div>
           </div>
-          <div className="flex flex-col">
-            <p className="text-lg">{user.name}</p>
-            <p className="text-ev-dark-gray">{user.username}</p>
-          </div>
-        </div>
+        )}
 
         <div className="relative w-full h-44">
           <Image
@@ -57,4 +59,5 @@ export default function CardEvent({ event }) {
 
 CardEvent.typeProps = {
   event: PropTypes.object,
+  noHeader: PropTypes.bool,
 };

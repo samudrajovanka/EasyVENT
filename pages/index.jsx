@@ -25,29 +25,33 @@ export default function HomePage() {
 
   return (
     <>
-      <div className="flex justify-center mb-10">
-        <Pagination
-          pageActive={pageActive}
-          endPage={events.maxPage}
-          leftClick={handleLeftClick}
-          rightClick={handleRightClick}
-          pageClick={handlePageClick}
-        />
-      </div>
+      {events.maxPage > 1 && (
+        <div className="flex justify-center mb-10">
+          <Pagination
+            pageActive={pageActive}
+            endPage={events.maxPage}
+            leftClick={handleLeftClick}
+            rightClick={handleRightClick}
+            pageClick={handlePageClick}
+          />
+        </div>
+      )}
       <div className="grid grid-cols-3 gap-4">
         {events.data.events.map((event) => (
           <CardEvent key={event.id} event={event} />
         ))}
       </div>
-      <div className="flex justify-center mt-10">
-        <Pagination
-          pageActive={pageActive}
-          endPage={events.maxPage}
-          leftClick={handleLeftClick}
-          rightClick={handleRightClick}
-          pageClick={handlePageClick}
-        />
-      </div>
+      {events.maxPage > 1 && (
+        <div className="flex justify-center mt-10">
+          <Pagination
+            pageActive={pageActive}
+            endPage={events.maxPage}
+            leftClick={handleLeftClick}
+            rightClick={handleRightClick}
+            pageClick={handlePageClick}
+          />
+        </div>
+      )}
     </>
   );
 }
