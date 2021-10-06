@@ -8,7 +8,7 @@ const usersFollowing = [
   },
   {
     id: 2,
-    username: 'gdi_infotect',
+    username: 'gdi_infotech',
     following: [
       'fikfair2021',
       'indotech21',
