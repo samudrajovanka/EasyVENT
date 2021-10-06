@@ -47,6 +47,26 @@ export default function ProfileUserPage() {
     setPageActive(page);
   };
 
+  const handleFollow = () => {
+    setUser((userCurrent) => ({
+      ...userCurrent,
+      followers: [...userCurrent?.followers, usernameCookie],
+    }));
+
+    const loginUser = fetchData.getUserByUsername(usernameCookie);
+    loginUser.following.push(user?.username);
+  };
+
+  const handleUnfollow = () => {
+    setUser((userCurrent) => ({
+      ...userCurrent,
+      followers: userCurrent?.followers.filter((follower) => follower !== usernameCookie),
+    }));
+
+    const loginUser = fetchData.getUserByUsername(usernameCookie);
+    loginUser.followers = loginUser.following.filter((following) => following !== user?.username);
+  };
+
   return (
     <>
       <header className="flex gap-24 items-center">
@@ -62,16 +82,26 @@ export default function ProfileUserPage() {
         <div className="flex flex-col gap-8">
           <div className="flex flex-col gap-2">
             <div className="flex gap-10">
-              <Title>{user?.name}</Title>
+              <Title>{user?.name ?? ''}</Title>
               {usernameCookie && (
                 <>
                   {username === usernameCookie && (
                     <Button typeButton="secondary" href="/profile/edit">Edit Profile</Button>
                   )}
-                  {username !== usernameCookie && (
-                    <Button>Follow</Button>
+                  {username !== usernameCookie
+                    && user?.followers?.some((followers) => followers === usernameCookie)
+                    && (
+                      <Button typeButton="secondary" onClick={handleUnfollow}>Unfollow</Button>
+                    )}
+                  {username !== usernameCookie
+                  && !user?.followers?.some((followers) => followers === usernameCookie)
+                  && (
+                    <Button onClick={handleFollow}>Follow</Button>
                   )}
                 </>
+              )}
+              {!usernameCookie && (
+                <Button href="/login">Follow</Button>
               )}
             </div>
             <p className="text-xl text-ev-dark-gray">{username ?? ''}</p>

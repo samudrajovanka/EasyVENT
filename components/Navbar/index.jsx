@@ -51,6 +51,7 @@ export default function Navbar() {
   const handleLogout = () => {
     Cookies.remove('login');
     Cookies.remove('avatar');
+    Cookies.remove('username');
     toggleDropdown();
     router.replace('/');
   };

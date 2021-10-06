@@ -11,7 +11,7 @@ const usersFollowers = [
     id: 2,
     username: 'gdi_infotech',
     followers: [
-      'fikfair21',
+      'fikfair2021',
       'indotech21',
     ],
   },
