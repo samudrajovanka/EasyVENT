@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import Link from 'next/link';
 
 export default function Button({
-  children, type, onClick, typeButton, href, full,
+  children, type, onClick, typeButton, href, full, target,
 }) {
   let backgroundBtn = '';
   let textColor = 'text-ev-black';
@@ -18,7 +18,10 @@ export default function Button({
   if (href !== null) {
     return (
       <Link href={href}>
-        <a className={`${backgroundBtn} ${textColor} ${sizeBtn} flex items-center h-10 px-8 rounded`}>
+        <a
+          className={`${backgroundBtn} ${textColor} ${sizeBtn} flex items-center h-10 px-8 rounded justify-center`} 
+          target={target}
+        >
           {children}
         </a>
       </Link>
@@ -41,6 +44,7 @@ Button.defaultProps = {
   typeButton: 'primary',
   href: null,
   full: false,
+  target: '_self',
 };
 
 Button.propsTypes = {
@@ -49,4 +53,5 @@ Button.propsTypes = {
   typeButton: PropTypes.string,
   href: PropTypes.string,
   full: PropTypes.bool,
+  target: PropTypes.string,
 };
