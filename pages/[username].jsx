@@ -27,6 +27,7 @@ export default function ProfileUserPage() {
     }
 
     setUser(fetchData.getUserByUsername(username));
+    console.log(user);
     setEvents(fetchData.getEventsByUsername(username, pageActive));
     setLoading(false);
   }, [username]);
