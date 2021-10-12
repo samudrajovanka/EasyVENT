@@ -77,6 +77,7 @@ export default function ProfileUserPage() {
               src={user?.avatar}
               layout="fill"
               loading="lazy"
+              alt="profile_avatar"
             />
           )}
         </div>

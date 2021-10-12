@@ -8,7 +8,9 @@ import { useRouter } from 'next/dist/client/router';
 import { useEffect, useState } from 'react';
 import rupiahFormat from '@lib/currencyFormat';
 import moment from 'moment';
-import { faInstagram, faLine, faTelegram, faTelegramPlane, faWhatsapp } from '@fortawesome/free-brands-svg-icons';
+import {
+  faInstagram, faLine, faTelegramPlane, faWhatsapp,
+} from '@fortawesome/free-brands-svg-icons';
 import Link from 'next/link';
 import Button from '@components/Button';
 
@@ -36,6 +38,7 @@ export default function DetailEventPage() {
                 src={event?.banner}
                 layout="fill"
                 loading="lazy"
+                alt="banner_event"
               />
             </div>
             <div className="flex flex-col gap-8 p-5">
@@ -86,17 +89,19 @@ export default function DetailEventPage() {
                   <FontAwesomeIcon icon={faAddressCard} size="lg" />
                   <p className="font-bold text-xl">Contact Person</p>
                 </div>
-                {event?.contactPersons.map((contactperson, index) => {
+                {event?.contactPersons.map((contactperson) => {
                   if (contactperson.app === 'whatsapp') {
                     return (
-                      <Link href={`https://wa.me/${contactperson.value}`}>
+                      <Link href={`https://wa.me/${contactperson.value}`} key={+Date}>
                         <a className="flex items-center gap-2" target="_blank">
                           <FontAwesomeIcon icon={faWhatsapp} size="lg" />
                           <p className="text-xl">{contactperson.name}</p>
                         </a>
                       </Link>
-                    )
-                  } else if (contactperson.app === 'line') {
+                    );
+                  }
+
+                  if (contactperson.app === 'line') {
                     return (
                       <Link href={`https://line.me/R/ti/p/${contactperson.value}`}>
                         <a className="flex items-center gap-2" target="_blank">
@@ -104,8 +109,10 @@ export default function DetailEventPage() {
                           <p className="text-xl">{contactperson.name}</p>
                         </a>
                       </Link>
-                    )
-                  } else if (contactperson.app === 'telegram') {
+                    );
+                  }
+
+                  if (contactperson.app === 'telegram') {
                     return (
                       <Link href={`https://telegram.me/${contactperson.value}`}>
                         <a className="flex items-center gap-2" target="_blank">
@@ -113,8 +120,10 @@ export default function DetailEventPage() {
                           <p className="text-xl">{contactperson.name}</p>
                         </a>
                       </Link>
-                    )
-                  } else if (contactperson.app === 'instagram') {
+                    );
+                  }
+
+                  if (contactperson.app === 'instagram') {
                     return (
                       <Link href={`https://www.instagram.com/${contactperson.value}`}>
                         <a className="flex items-center gap-2" target="_blank">
@@ -122,8 +131,10 @@ export default function DetailEventPage() {
                           <p className="text-xl">{contactperson.name}</p>
                         </a>
                       </Link>
-                    )
+                    );
                   }
+
+                  return null;
                 })}
               </div>
               <Button href={event?.registrationLink} target="_blank">Register Now</Button>
@@ -132,5 +143,5 @@ export default function DetailEventPage() {
         </>
       )}
     </div>
-  )
+  );
 }

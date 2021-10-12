@@ -23,6 +23,7 @@ export default function CardEvent({ event, noHeader }) {
                   src={user.avatar}
                   layout="fill"
                   loading="lazy"
+                  alt="banner_card"
                 />
               </div>
               <div className="flex flex-col">
