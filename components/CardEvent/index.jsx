@@ -38,6 +38,7 @@ export default function CardEvent({ event, noHeader }) {
               src={event.banner}
               layout="fill"
               loading="lazy"
+              alt="profile_avatar"
             />
           </div>
 

@@ -86,6 +86,7 @@ export default function Navbar() {
                   src={avatar}
                   layout="fill"
                   loading="lazy"
+                  alt="profile_avatar"
                 />
               </button>
 
