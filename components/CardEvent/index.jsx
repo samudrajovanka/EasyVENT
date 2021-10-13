@@ -27,13 +27,13 @@ export default function CardEvent({ event, noHeader }) {
                 />
               </div>
               <div className="flex flex-col">
-                <p className="text-lg">{user.name}</p>
+                <p className="sm:text-lg">{user.name}</p>
                 <p className="text-ev-dark-gray">{user.username}</p>
               </div>
             </div>
           )}
 
-          <div className="relative w-full h-44">
+          <div className="relative w-full h-44 sm:h-40 md:h-48 lg:h-40 2xl:h-48">
             <Image
               src={event.banner}
               layout="fill"

@@ -1,6 +1,6 @@
 import Button from '@components/Button';
 import EasyventIcon from '@components/Icons/EasyventIcon';
-import { faHome, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faSearch, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Cookies from 'js-cookie';
 import Link from 'next/link';
@@ -10,6 +10,7 @@ import Dropdown from '@components/Dropdown';
 import DropdownItem from '@components/DropdownItem';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/dist/client/router';
+import NavLink from '@components/NavLink';
 
 export default function Navbar() {
   const [login, setLogin] = useState(false);
@@ -57,26 +58,28 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-white w-full py-3 border-b-2 border-ev-gray px-48 flex justify-between items-center">
+    <nav className={`sticky top-0 z-50 bg-white w-full py-3 border-b-2 border-ev-gray px-4 md:px-12 lg:px-24 xl:px-48 2xl:px-56 flex ${login ? 'justify-between' : 'justify-start sm:justify-between'} items-center`}>
       <Link href="/">
         <a>
           <EasyventIcon />
         </a>
       </Link>
 
-      <div className="flex gap-4 items-center">
-        <Link href="/">
-          <a><FontAwesomeIcon icon={faHome} /></a>
-        </Link>
-        <Link href="/search">
-          <a><FontAwesomeIcon icon={faSearch} /></a>
-        </Link>
+      <div className="hidden sm:flex gap-4 items-center">
+        <NavLink href="/" active>
+          <FontAwesomeIcon icon={faHome} />
+        </NavLink>
+
+        <NavLink href="/search" active>
+          <FontAwesomeIcon icon={faSearch} />
+        </NavLink>
 
         {login && !loading && (
           <>
-            <Link href="/create">
-              <a><FontAwesomeIcon icon={faPlusSquare} /></a>
-            </Link>
+            <NavLink href="/create" active>
+              <FontAwesomeIcon icon={faPlusSquare} />
+            </NavLink>
+
             <div className="relative">
               <button
                 className="relative w-10 h-10 rounded-full overflow-hidden"
@@ -109,6 +112,12 @@ export default function Navbar() {
           </>
         )}
       </div>
+
+      {login && (
+        <div onClick={handleLogout} className="sm:hidden">
+          <FontAwesomeIcon icon={faSignOutAlt} size="lg" />
+        </div>
+      )}
     </nav>
   );
 }
