@@ -39,7 +39,7 @@ export default function BottomNavigation() {
           </NavLink>
 
           <NavLink href={`/${username}`}>
-            <div className="relative w-6 h-6 rounded-full overflow-hidden">
+            <div className="relative w-6 img-square-ratio rounded-full overflow-hidden">
               <Image
                 src={avatar}
                 layout="fill"

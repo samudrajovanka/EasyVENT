@@ -34,7 +34,7 @@ export default function DetailEventPage() {
       {!loading && event && (
         <>
           <div className="lg:col-span-8">
-            <div className="relative w-full h-44 sm:h-80 2xl:h-96">
+            <div className="relative w-full img-banner-ratio">
               <Image
                 src={event?.banner}
                 layout="fill"

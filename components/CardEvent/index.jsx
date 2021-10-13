@@ -18,7 +18,7 @@ export default function CardEvent({ event, noHeader }) {
         <div className="flex flex-col border border-ev-gray rounded hover:shadow-xl cursor-pointer overflow-hidden">
           {!noHeader && (
             <div className="flex items-center gap-3 p-4">
-              <div className="relative h-10 w-10 rounded-full overflow-hidden">
+              <div className="relative h-10 img-square-ratio rounded-full overflow-hidden">
                 <Image
                   src={user.avatar}
                   layout="fill"
@@ -33,7 +33,7 @@ export default function CardEvent({ event, noHeader }) {
             </div>
           )}
 
-          <div className="relative w-full h-44 sm:h-40 md:h-48 lg:h-40 2xl:h-48">
+          <div className="relative w-full img-banner-ratio">
             <Image
               src={event.banner}
               layout="fill"

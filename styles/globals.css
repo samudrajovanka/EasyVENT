@@ -30,3 +30,11 @@ body {
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
   font-size: 16px;
 }
+
+.img-banner-ratio {
+  aspect-ratio: 16/9;
+}
+
+.img-square-ratio {
+  aspect-ratio: 1/1;
+}
