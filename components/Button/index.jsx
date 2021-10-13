@@ -19,7 +19,7 @@ export default function Button({
     return (
       <Link href={href}>
         <a
-          className={`${backgroundBtn} ${textColor} ${sizeBtn} flex items-center h-10 px-8 rounded justify-center`} 
+          className={`${backgroundBtn} ${textColor} ${sizeBtn} flex items-center h-10 px-8 rounded justify-center`}
           target={target}
         >
           {children}

@@ -1,4 +1,4 @@
-import CardEvent from '@components/CardEvent';
+import EventList from '@components/EventList';
 import Pagination from '@components/Pagination';
 import fetchData from '@lib/fetchData';
 import { useState } from 'react';
@@ -36,11 +36,7 @@ export default function HomePage() {
           />
         </div>
       )}
-      <div className="grid grid-cols-3 gap-4">
-        {events.data.events.map((event) => (
-          <CardEvent key={event.id} event={event} />
-        ))}
-      </div>
+      <EventList events={events?.data?.events ?? []} />
       {events.maxPage > 1 && (
         <div className="flex justify-center mt-10">
           <Pagination

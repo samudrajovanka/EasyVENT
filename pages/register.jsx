@@ -105,7 +105,7 @@ export default function RegisterPage() {
 
   return (
     <form className="flex justify-center" onSubmit={(e) => handleRegister(e)} noValidate>
-      <Card width="w-6/12" padding="p-8" gap="gap-10">
+      <Card width="w-full lg:w-6/12" padding="p-5 lg:p-8" gap="gap-10">
         <Title>Register</Title>
 
         <div className="flex flex-col gap-4">

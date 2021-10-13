@@ -13,6 +13,7 @@ import {
 } from '@fortawesome/free-brands-svg-icons';
 import Link from 'next/link';
 import Button from '@components/Button';
+import uuid from 'react-uuid';
 
 export default function DetailEventPage() {
   const router = useRouter();
@@ -29,11 +30,11 @@ export default function DetailEventPage() {
   }, [eventId]);
 
   return (
-    <div className="grid grid-cols-12 gap-5">
+    <div className="grid lg:grid-cols-12 gap-5">
       {!loading && event && (
         <>
-          <div className="col-span-8">
-            <div className="relative w-full h-80">
+          <div className="lg:col-span-8">
+            <div className="relative w-full h-44 sm:h-80 2xl:h-96">
               <Image
                 src={event?.banner}
                 layout="fill"
@@ -41,7 +42,7 @@ export default function DetailEventPage() {
                 alt="banner_event"
               />
             </div>
-            <div className="flex flex-col gap-8 p-5">
+            <div className="flex flex-col gap-8 lg:p-5">
               <header className="flex flex-col gap-2">
                 <h1 className="text-2xl">{event?.eventName}</h1>
                 <div className="flex">
@@ -52,7 +53,7 @@ export default function DetailEventPage() {
             </div>
           </div>
 
-          <div className="col-span-4">
+          <div className="lg:col-span-4">
             <Title>Information Event</Title>
             <div className="flex flex-col gap-10 mt-2">
               <div>
@@ -60,7 +61,7 @@ export default function DetailEventPage() {
                   <FontAwesomeIcon icon={faMoneyBillAlt} size="lg" />
                   <p className="font-bold text-xl">Fee</p>
                 </div>
-                <p className="text-xl">{event?.fee === 0 ? 'Free' : rupiahFormat(event?.fee)}</p>
+                <p>{event?.fee === 0 ? 'Free' : rupiahFormat(event?.fee)}</p>
               </div>
 
               {/* startdate */}
@@ -69,8 +70,8 @@ export default function DetailEventPage() {
                   <FontAwesomeIcon icon={faCalendarAlt} size="lg" />
                   <p className="font-bold text-xl">Start Date</p>
                 </div>
-                <p className="text-xl">{moment(event?.startDateTime).format('dddd, DD MMMM YYYY')}</p>
-                <p className="text-xl">{moment(event?.startDateTime).format('HH:mm')}</p>
+                <p>{moment(event?.startDateTime).format('dddd, DD MMMM YYYY')}</p>
+                <p>{moment(event?.startDateTime).format('HH:mm')}</p>
               </div>
 
               {/* enddate */}
@@ -79,8 +80,8 @@ export default function DetailEventPage() {
                   <FontAwesomeIcon icon={faMoneyBillAlt} size="lg" />
                   <p className="font-bold text-xl">End Date</p>
                 </div>
-                <p className="text-xl">{moment(event?.endDateTime).format('dddd, DD MMMM YYYY')}</p>
-                <p className="text-xl">{moment(event?.endDateTime).format('HH:mm')}</p>
+                <p>{moment(event?.endDateTime).format('dddd, DD MMMM YYYY')}</p>
+                <p>{moment(event?.endDateTime).format('HH:mm')}</p>
               </div>
 
               {/* contactperson */}
@@ -92,10 +93,10 @@ export default function DetailEventPage() {
                 {event?.contactPersons.map((contactperson) => {
                   if (contactperson.app === 'whatsapp') {
                     return (
-                      <Link href={`https://wa.me/${contactperson.value}`} key={+Date}>
+                      <Link href={`https://wa.me/${contactperson.value}`} key={uuid()}>
                         <a className="flex items-center gap-2" target="_blank">
                           <FontAwesomeIcon icon={faWhatsapp} size="lg" />
-                          <p className="text-xl">{contactperson.name}</p>
+                          <p>{contactperson.name}</p>
                         </a>
                       </Link>
                     );
@@ -103,10 +104,10 @@ export default function DetailEventPage() {
 
                   if (contactperson.app === 'line') {
                     return (
-                      <Link href={`https://line.me/R/ti/p/${contactperson.value}`}>
+                      <Link href={`https://line.me/R/ti/p/${contactperson.value}`} key={uuid()}>
                         <a className="flex items-center gap-2" target="_blank">
                           <FontAwesomeIcon icon={faLine} size="lg" />
-                          <p className="text-xl">{contactperson.name}</p>
+                          <p>{contactperson.name}</p>
                         </a>
                       </Link>
                     );
@@ -114,10 +115,10 @@ export default function DetailEventPage() {
 
                   if (contactperson.app === 'telegram') {
                     return (
-                      <Link href={`https://telegram.me/${contactperson.value}`}>
+                      <Link href={`https://telegram.me/${contactperson.value}`} key={uuid()}>
                         <a className="flex items-center gap-2" target="_blank">
                           <FontAwesomeIcon icon={faTelegramPlane} size="lg" />
-                          <p className="text-xl">{contactperson.name}</p>
+                          <p>{contactperson.name}</p>
                         </a>
                       </Link>
                     );
@@ -125,10 +126,10 @@ export default function DetailEventPage() {
 
                   if (contactperson.app === 'instagram') {
                     return (
-                      <Link href={`https://www.instagram.com/${contactperson.value}`}>
+                      <Link href={`https://www.instagram.com/${contactperson.value}`} key={uuid()}>
                         <a className="flex items-center gap-2" target="_blank">
                           <FontAwesomeIcon icon={faInstagram} size="lg" />
-                          <p className="text-xl">{contactperson.name}</p>
+                          <p>{contactperson.name}</p>
                         </a>
                       </Link>
                     );
