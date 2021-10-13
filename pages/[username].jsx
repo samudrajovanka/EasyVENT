@@ -148,7 +148,7 @@ export default function ProfileUserPage() {
           </div>
         )}
 
-        <EventList events={events?.data?.events ?? []} />
+        <EventList events={events?.data?.events ?? []} noHeader />
 
         {events.maxPage > 1 && (
           <div className="flex justify-center mt-10">
