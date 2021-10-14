@@ -61,7 +61,7 @@ export default function LoginPage() {
   };
 
   return (
-    <form className="flex lg:justify-center items-center absolute top-0 left-0 h-screen w-full p-4 sm:relative sm:p-0 sm:h-auto" onSubmit={(e) => handleLogin(e)} noValidate>
+    <form className="flex justify-center items-center absolute top-0 left-0 h-screen w-full p-4 sm:relative sm:p-0 sm:h-auto" onSubmit={(e) => handleLogin(e)} noValidate>
       <Card width="w-full lg:w-6/12" padding="p-5 lg:p-8" gap="gap-10">
         <Title>Login</Title>
 
