@@ -4,8 +4,17 @@ import LabelInput from '@components/LabelInput';
 import Title from '@components/Title';
 import { useState } from 'react';
 import Link from 'next/link';
-import fetchData from '@lib/fetchData';
 import { useRouter } from 'next/dist/client/router';
+import { fetchApi } from '@lib/fetchingData';
+import { EXIST_DATA_ERR, VALIDATION_ERR } from '@lib/constantErrorType';
+import {
+  CONFIRM_PASSWORD_ERR_MSG,
+  EMAIL_EXIST_ERR_MSG,
+  NAME_ALPHANUMERIC_ERR_MSG,
+  USERNAME_EXIST_ERR_MSG,
+  USERNAME_REGEX_ERR_MSG,
+} from '@lib/constantErrorMessage';
+import { isAlphanumericWithSpace, isEmail, isUsername } from '@lib/typeChecking';
 
 export default function RegisterPage() {
   const [name, setName] = useState('');
@@ -30,72 +39,108 @@ export default function RegisterPage() {
     }));
   };
 
-  const handleRegister = async (e) => {
-    e.preventDefault();
+  const validateForm = () => {
     let isValid = true;
 
     if (name === '') {
       setErrorMessage('name', 'Name is required');
       isValid = false;
+    } else if (!isAlphanumericWithSpace(name)) {
+      setErrorMessage('name', NAME_ALPHANUMERIC_ERR_MSG);
+      isValid = false;
+    } else if (name.length < 3 || name.length > 20) {
+      setErrorMessage('name', 'Name must be between 3 and 20 characters');
+      isValid = false;
     } else {
       setErrorMessage('name', '');
-      isValid = true;
+      isValid = isValid && true;
     }
 
     if (email === '') {
       setErrorMessage('email', 'Email is required');
       isValid = false;
+    } else if (!isEmail(email)) {
+      setErrorMessage('email', 'Email is invalid');
+      isValid = false;
     } else {
       setErrorMessage('email', '');
-      isValid = true;
+      isValid = isValid && true;
     }
 
     if (username === '') {
       setErrorMessage('username', 'Username is required');
       isValid = false;
+    } else if (!isUsername(username)) {
+      setErrorMessage('username', USERNAME_REGEX_ERR_MSG);
+      isValid = false;
+    } else if (username.length < 3 || username.length > 20) {
+      setErrorMessage('username', 'Username must be between 3 and 20 characters');
+      isValid = false;
     } else {
       setErrorMessage('username', '');
-      isValid = true;
+      isValid = isValid && true;
     }
 
     if (password === '') {
       setErrorMessage('password', 'Password is required');
       isValid = false;
-    } else if (password.length < 8) {
-      setErrorMessage('password', 'Password must be at least 8 characters');
+    } else if (password.length < 8 || password.length > 100) {
+      setErrorMessage('password', 'Password must be between 8 and 100 characters');
       isValid = false;
     } else {
       setErrorMessage('password', '');
-      isValid = true;
+      isValid = isValid && true;
     }
 
     if (confirmPassword === '') {
       setErrorMessage('confirmPassword', 'Confirm password is required');
       isValid = false;
     } else if (confirmPassword !== password) {
-      setErrorMessage('confirmPassword', 'Confirm password must match');
+      setErrorMessage('confirmPassword', CONFIRM_PASSWORD_ERR_MSG);
       isValid = false;
     } else {
       setErrorMessage('confirmPassword', '');
-      isValid = true;
+      isValid = isValid && true;
     }
 
+    return isValid;
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+
+    const isValid = validateForm();
+
     if (isValid) {
-      const response = fetchData.register({
-        name, email, username, password, confirmPassword,
+      const response = await fetchApi('/auth/register', {
+        method: 'POST',
+        body: {
+          name,
+          email,
+          username,
+          password,
+          confirmPassword,
+        },
+        headers: {
+          accept: 'application/json',
+        },
       });
 
       if (response.success) {
         router.replace('/login');
       } else if (!response.success) {
-        if (response.type === 'EMAIL_EXIST') {
-          setErrorMessage('email', response.message);
-        } else if (response.type === 'USERNAME_EXIST') {
-          setErrorMessage('username', response.message);
-        } else if (response.type === 'PASSWORD_LENGTH') {
-          setErrorMessage('password', response.message);
-        } else if (response.type === 'PASSWORD_MISMATCH') {
-          setErrorMessage('confirmPassword', response.message);
+        if (response.type === VALIDATION_ERR) {
+          if (response.message === NAME_ALPHANUMERIC_ERR_MSG) {
+            setErrorMessage('name', response.message);
+          } else if (response.message === USERNAME_REGEX_ERR_MSG) {
+            setErrorMessage('username', response.message);
+          }
+        } else if (response.type === EXIST_DATA_ERR) {
+          if (response.message === EMAIL_EXIST_ERR_MSG) {
+            setErrorMessage('email', response.message);
+          } else if (response.message === USERNAME_EXIST_ERR_MSG) {
+            setErrorMessage('username', response.message);
+          }
         } else {
           setErrorMessage('register', 'Something when wrong, try again!');
         }

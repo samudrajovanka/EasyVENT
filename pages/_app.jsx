@@ -3,16 +3,19 @@ import '../styles/globals.css';
 import 'tailwindcss/tailwind.css';
 import Head from 'next/head';
 import Layout from '@components/Layout';
+import { Provider as AuthProvider } from 'next-auth/client';
 
 function MyApp({ Component, pageProps }) {
   return (
-    <Layout>
-      <Head>
-        <title>EasyVENT</title>
-      </Head>
+    <AuthProvider session={pageProps.session}>
+      <Layout>
+        <Head>
+          <title>EasyVENT</title>
+        </Head>
 
-      <Component {...pageProps} />
-    </Layout>
+        <Component {...pageProps} />
+      </Layout>
+    </AuthProvider>
   );
 }
 

@@ -2,11 +2,10 @@ import Button from '@components/Button';
 import Card from '@components/Card';
 import LabelInput from '@components/LabelInput';
 import Title from '@components/Title';
-import fetchData from '@lib/fetchData';
-import Cookies from 'js-cookie';
 import { useRouter } from 'next/dist/client/router';
 import Link from 'next/link';
 import { useState } from 'react';
+import { signIn } from 'next-auth/client';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -25,8 +24,7 @@ export default function LoginPage() {
     }));
   };
 
-  const handleLogin = (e) => {
-    e.preventDefault();
+  const validateForm = () => {
     let isValid = true;
 
     if (username === '') {
@@ -45,23 +43,32 @@ export default function LoginPage() {
       isValid = true;
     }
 
-    if (isValid) {
-      const user = fetchData.login(username, password);
+    return isValid;
+  };
 
-      if (user) {
-        Cookies.set('login', true);
-        Cookies.set('username', user.username);
-        Cookies.set('avatar', user.avatar);
-        setErrorMessage('login', '');
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setErrorMessage('login', '');
+
+    const isValid = validateForm();
+
+    if (isValid) {
+      const response = await signIn('credentials', {
+        redirect: false,
+        username,
+        password,
+      });
+
+      if (!response.error) {
         router.replace('/');
       } else {
-        setErrorMessage('login', 'Username or password invalid');
+        setErrorMessage('login', response.error);
       }
     }
   };
 
   return (
-    <form className="flex lg:justify-center items-center absolute top-0 left-0 h-screen w-full p-4 sm:relative sm:p-0 sm:h-auto" onSubmit={(e) => handleLogin(e)} noValidate>
+    <form className="flex justify-center items-center absolute top-0 left-0 h-screen w-full p-4 sm:relative sm:p-0 sm:h-auto" onSubmit={(e) => handleLogin(e)} noValidate>
       <Card width="w-full lg:w-6/12" padding="p-5 lg:p-8" gap="gap-10">
         <Title>Login</Title>
 
