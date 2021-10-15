@@ -8,6 +8,7 @@ import { useRouter } from 'next/dist/client/router';
 import { fetchApi } from '@lib/fetchingData';
 import { EXIST_DATA_ERR, VALIDATION_ERR } from '@lib/constantErrorType';
 import {
+  CONFIRM_PASSWORD_ERR_MSG,
   EMAIL_EXIST_ERR_MSG,
   NAME_ALPHANUMERIC_ERR_MSG,
   USERNAME_EXIST_ERR_MSG,
@@ -38,8 +39,7 @@ export default function RegisterPage() {
     }));
   };
 
-  const handleRegister = async (e) => {
-    e.preventDefault();
+  const validateForm = () => {
     let isValid = true;
 
     if (name === '') {
@@ -47,6 +47,9 @@ export default function RegisterPage() {
       isValid = false;
     } else if (!isAlphanumericWithSpace(name)) {
       setErrorMessage('name', NAME_ALPHANUMERIC_ERR_MSG);
+      isValid = false;
+    } else if (name.length < 3 || name.length > 20) {
+      setErrorMessage('name', 'Name must be between 3 and 20 characters');
       isValid = false;
     } else {
       setErrorMessage('name', '');
@@ -70,6 +73,9 @@ export default function RegisterPage() {
     } else if (!isUsername(username)) {
       setErrorMessage('username', USERNAME_REGEX_ERR_MSG);
       isValid = false;
+    } else if (username.length < 3 || username.length > 20) {
+      setErrorMessage('username', 'Username must be between 3 and 20 characters');
+      isValid = false;
     } else {
       setErrorMessage('username', '');
       isValid = isValid && true;
@@ -78,8 +84,8 @@ export default function RegisterPage() {
     if (password === '') {
       setErrorMessage('password', 'Password is required');
       isValid = false;
-    } else if (password.length < 8) {
-      setErrorMessage('password', 'Password must be at least 8 characters');
+    } else if (password.length < 8 || password.length > 100) {
+      setErrorMessage('password', 'Password must be between 8 and 100 characters');
       isValid = false;
     } else {
       setErrorMessage('password', '');
@@ -90,12 +96,20 @@ export default function RegisterPage() {
       setErrorMessage('confirmPassword', 'Confirm password is required');
       isValid = false;
     } else if (confirmPassword !== password) {
-      setErrorMessage('confirmPassword', 'Confirm password must match');
+      setErrorMessage('confirmPassword', CONFIRM_PASSWORD_ERR_MSG);
       isValid = false;
     } else {
       setErrorMessage('confirmPassword', '');
       isValid = isValid && true;
     }
+
+    return isValid;
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+
+    const isValid = validateForm();
 
     if (isValid) {
       const response = await fetchApi('/auth/register', {

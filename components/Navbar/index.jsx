@@ -2,31 +2,19 @@ import Button from '@components/Button';
 import EasyventIcon from '@components/Icons/EasyventIcon';
 import { faHome, faSearch, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Cookies from 'js-cookie';
 import Link from 'next/link';
 import Image from 'next/image';
 import { faPlusSquare } from '@fortawesome/free-regular-svg-icons';
 import Dropdown from '@components/Dropdown';
 import DropdownItem from '@components/DropdownItem';
 import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/dist/client/router';
 import NavLink from '@components/NavLink';
+import { signOut, useSession } from 'next-auth/client';
 
 export default function Navbar() {
-  const [login, setLogin] = useState(false);
-  const [avatar, setAvatar] = useState('/images/avatar/default-avatar.jpg');
-  const [username, setUsername] = useState(Cookies.get('username'));
-  const [loading, setLoading] = useState(true);
+  const [session, loading] = useSession();
   const [isOpenDropdown, setIsOpenDropdown] = useState(false);
-  const router = useRouter();
   const dropdown = useRef(null);
-
-  useEffect(() => {
-    setLogin(Boolean(Cookies.get('login')));
-    setAvatar(Cookies.get('avatar'));
-    setUsername(Cookies.get('username'));
-    setLoading(false);
-  }, [Cookies.get('login')]);
 
   useEffect(() => {
     if (!isOpenDropdown) return;
@@ -49,16 +37,13 @@ export default function Navbar() {
     setIsOpenDropdown((current) => !current);
   };
 
-  const handleLogout = () => {
-    Cookies.remove('login');
-    Cookies.remove('avatar');
-    Cookies.remove('username');
+  const handleLogout = async () => {
     toggleDropdown();
-    router.replace('/');
+    await signOut({ redirect: false });
   };
 
   return (
-    <nav className={`sticky top-0 z-50 bg-white w-full py-3 border-b-2 border-ev-gray px-4 md:px-12 lg:px-24 xl:px-48 2xl:px-56 flex ${login ? 'justify-between' : 'justify-start sm:justify-between'} items-center`}>
+    <nav className={`sticky top-0 z-50 bg-white w-full py-3 border-b-2 border-ev-gray px-4 md:px-12 lg:px-24 xl:px-48 2xl:px-56 flex ${session ? 'justify-between' : 'justify-start sm:justify-between'} items-center`}>
       <Link href="/">
         <a>
           <EasyventIcon />
@@ -74,7 +59,7 @@ export default function Navbar() {
           <FontAwesomeIcon icon={faSearch} />
         </NavLink>
 
-        {login && !loading && (
+        {session && (
           <>
             <NavLink href="/create" active>
               <FontAwesomeIcon icon={faPlusSquare} />
@@ -86,7 +71,7 @@ export default function Navbar() {
                 onClick={toggleDropdown}
               >
                 <Image
-                  src={avatar}
+                  src={session.user.image}
                   layout="fill"
                   loading="lazy"
                   alt="profile_avatar"
@@ -96,7 +81,7 @@ export default function Navbar() {
               {isOpenDropdown && (
                 <div ref={dropdown}>
                   <Dropdown>
-                    <DropdownItem href={`/${username}`} onClick={toggleDropdown}>Profile</DropdownItem>
+                    <DropdownItem href={`/${session.user.name}`} onClick={toggleDropdown}>Profile</DropdownItem>
                     <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
                   </Dropdown>
                 </div>
@@ -105,7 +90,7 @@ export default function Navbar() {
           </>
         )}
 
-        {!login && (
+        {!loading && !session && (
           <>
             <Button typeButton="secondary" href="/login">Login</Button>
             <Button href="/register">Register</Button>
@@ -113,7 +98,7 @@ export default function Navbar() {
         )}
       </div>
 
-      {login && (
+      {session && (
         <div onClick={handleLogout} className="sm:hidden">
           <FontAwesomeIcon icon={faSignOutAlt} size="lg" />
         </div>

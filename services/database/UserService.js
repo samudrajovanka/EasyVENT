@@ -1,26 +1,45 @@
+/* eslint-disable import/no-cycle */
 import InvariantError from '@exceptions/InvariantError';
-import { EXIST_DATA_ERR, TOKEN_INVALID_ERR, VALIDATION_ERR } from '@lib/constantErrorType';
+import {
+  EXIST_DATA_ERR,
+  NOT_FOUND_ERR,
+  TOKEN_INVALID_ERR,
+  VALIDATION_ERR,
+} from '@lib/constantErrorType';
 import User from '@models/UserModel';
 import bcrypt from 'bcrypt';
 import sendEmail from '@lib/sendEmail';
-import { createToken, decodedToken } from '@lib/tokenManager';
-import { EMAIL_EXIST_ERR_MSG, TOKEN_INVALID_ERR_MSG, USERNAME_EXIST_ERR_MSG } from '@lib/constantErrorMessage';
+import { createToken, decodeToken } from '@lib/tokenManager';
+import {
+  CONFIRM_PASSWORD_ERR_MSG,
+  EMAIL_EXIST_ERR_MSG,
+  TOKEN_INVALID_ERR_MSG,
+  USERNAME_EXIST_ERR_MSG,
+} from '@lib/constantErrorMessage';
+import NotFoundError from '@exceptions/NotFoundError';
+import { mapUserData } from '@lib/formatData';
+import UserFollowingsService from './UserFollowingsService';
 import UserFollowersService from './UserFollowersService';
-import UserFollowingService from './UserFollowingService';
 
 class UserService {
   async createUser({
     name, email, username, password, confirmPassword,
   }) {
     // check email is unique
-    await this.checkExistUser('email', email, EMAIL_EXIST_ERR_MSG);
+    const isEmailExist = await this.checkExistUser('email', email);
+    if (isEmailExist) {
+      throw new InvariantError(EMAIL_EXIST_ERR_MSG, EXIST_DATA_ERR);
+    }
 
     // check username is unique
-    await this.checkExistUser('username', username, USERNAME_EXIST_ERR_MSG);
+    const isUsernameExist = await this.checkExistUser('username', username);
+    if (isUsernameExist) {
+      throw new InvariantError(USERNAME_EXIST_ERR_MSG, EXIST_DATA_ERR);
+    }
 
     // check password and confirmPassword is same
     if (password !== confirmPassword) {
-      throw new InvariantError('Confirm password do not match', VALIDATION_ERR);
+      throw new InvariantError(CONFIRM_PASSWORD_ERR_MSG, VALIDATION_ERR);
     }
 
     // hash password
@@ -32,14 +51,14 @@ class UserService {
       email: email.toLowerCase().trim(),
       username: username.toLowerCase().trim(),
       password: hashedPassword,
-    }, { expiresIn: '5m' });
+    }, process.env.SECRET_KEY_VERIFY, { expiresIn: '5m' });
 
     // send email to user
     const messageEmail = `
       <center>
         <h1>Welcome to EasyVENT</h1>
         <p>Please click the link below to verify your email address and complete your registration.</p>
-        <a href="${process.env.HOME_URL}/verify/${token}" style="padding: 8px 12px; color: white; background-color: #3d91ff; border-radius: 3px; display: inline-block; width: 50%; text-align: center;">Verify Email</a>
+        <a href="${process.env.HOME_URL}/verify/${token}" style="padding: 8px 12px; color: white; background-color: #3d91ff; border-radius: 3px; display: inline-block; width: 50%; text-align: center; text-decoration: none;">Verify Email</a>
       </center>
     `;
 
@@ -52,7 +71,7 @@ class UserService {
 
   async verifyEmail({ token }) {
     try {
-      const decoded = await decodedToken(token);
+      const decoded = await decodeToken(token, process.env.SECRET_KEY_VERIFY);
 
       const {
         name, email, username, password,
@@ -77,7 +96,7 @@ class UserService {
       const userFollowersService = new UserFollowersService();
       userFollowersService.createFollowers({ username });
 
-      const userFollowingService = new UserFollowingService();
+      const userFollowingService = new UserFollowingsService();
       userFollowingService.createFollowing({ username });
 
       return user._id;
@@ -86,11 +105,29 @@ class UserService {
     }
   }
 
-  async checkExistUser(condition, value, messageError) {
+  async getUserByUsername({ username }) {
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      throw new NotFoundError('User not found', NOT_FOUND_ERR);
+    }
+
+    const userFollowersService = new UserFollowersService();
+    const userFollowingsService = new UserFollowingsService();
+
+    const followers = await userFollowersService.getUserFollowers({ username });
+    const followings = await userFollowingsService.getUserFollowings({ username });
+
+    const userFormated = mapUserData(user, followers, followings);
+
+    return userFormated;
+  }
+
+  async checkExistUser(condition, value) {
     const user = await User.findOne({ [condition]: value });
 
     if (user) {
-      throw new InvariantError(messageError, EXIST_DATA_ERR);
+      return true;
     }
 
     return false;

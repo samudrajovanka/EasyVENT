@@ -2,11 +2,10 @@ import Button from '@components/Button';
 import Card from '@components/Card';
 import LabelInput from '@components/LabelInput';
 import Title from '@components/Title';
-import fetchData from '@lib/fetchData';
-import Cookies from 'js-cookie';
 import { useRouter } from 'next/dist/client/router';
 import Link from 'next/link';
 import { useState } from 'react';
+import { signIn } from 'next-auth/client';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -25,8 +24,7 @@ export default function LoginPage() {
     }));
   };
 
-  const handleLogin = (e) => {
-    e.preventDefault();
+  const validateForm = () => {
     let isValid = true;
 
     if (username === '') {
@@ -45,17 +43,26 @@ export default function LoginPage() {
       isValid = true;
     }
 
-    if (isValid) {
-      const user = fetchData.login(username, password);
+    return isValid;
+  };
 
-      if (user) {
-        Cookies.set('login', true);
-        Cookies.set('username', user.username);
-        Cookies.set('avatar', user.avatar);
-        setErrorMessage('login', '');
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setErrorMessage('login', '');
+
+    const isValid = validateForm();
+
+    if (isValid) {
+      const response = await signIn('credentials', {
+        redirect: false,
+        username,
+        password,
+      });
+
+      if (!response.error) {
         router.replace('/');
       } else {
-        setErrorMessage('login', 'Username or password invalid');
+        setErrorMessage('login', response.error);
       }
     }
   };

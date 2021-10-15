@@ -3,24 +3,13 @@ import {
   faHome, faPlusSquare, faSearch, faSignInAlt, faUserPlus,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Cookies from 'js-cookie';
 import { useRouter } from 'next/dist/client/router';
-import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import { useSession } from 'next-auth/client';
 
 export default function BottomNavigation() {
-  const [login, setLogin] = useState(false);
-  const [avatar, setAvatar] = useState('/images/avatar/default-avatar.jpg');
-  const [username, setUsername] = useState(Cookies.get('username'));
-  const [loading, setLoading] = useState(true);
+  const [session, loading] = useSession();
   const router = useRouter();
-
-  useEffect(() => {
-    setLogin(Boolean(Cookies.get('login')));
-    setAvatar(Cookies.get('avatar'));
-    setUsername(Cookies.get('username'));
-    setLoading(false);
-  }, [Cookies.get('login')]);
 
   return (
     <nav className="flex justify-between gap-5 items-center px-10 py-4 fixed bottom-0 w-screen bg-white border-t-2 border-ev-gray shadow-xl sm:hidden">
@@ -32,16 +21,16 @@ export default function BottomNavigation() {
         <FontAwesomeIcon icon={faSearch} size="lg" />
       </NavLink>
 
-      {!loading && login && (
+      {session && (
         <>
           <NavLink href="/create" active={router.pathname === '/create'}>
             <FontAwesomeIcon icon={faPlusSquare} size="lg" />
           </NavLink>
 
-          <NavLink href={`/${username}`}>
+          <NavLink href={`/${session.user.name}`}>
             <div className="relative w-6 img-square-ratio rounded-full overflow-hidden">
               <Image
-                src={avatar}
+                src={session.user.image}
                 layout="fill"
                 loading="lazy"
                 alt="profile_avatar"
@@ -51,7 +40,7 @@ export default function BottomNavigation() {
         </>
       )}
 
-      {!login && (
+      {!loading && !session && (
         <>
           <NavLink href="/login" active={router.pathname === '/login'}>
             <FontAwesomeIcon icon={faSignInAlt} size="lg" />

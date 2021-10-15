@@ -3,32 +3,27 @@ import EventList from '@components/EventList';
 import Pagination from '@components/Pagination';
 import Title from '@components/Title';
 import fetchData from '@lib/fetchData';
-import Cookies from 'js-cookie';
 import { useRouter } from 'next/dist/client/router';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import { fetchApi } from '@lib/fetchingData';
+import { getSession } from 'next-auth/client';
 
-export default function ProfileUserPage() {
+export default function ProfileUserPage({ session, user }) {
   const [pageActive, setPageActive] = useState(1);
   const router = useRouter();
   const { username } = router.query;
-  const [user, setUser] = useState({});
-  const [usernameCookie, setUsernameCookie] = useState(Cookies.get('username'));
-  const [loading, setLoading] = useState(true);
+  const [followersCount, setFollowersCount] = useState(user.followers.count);
+  const [isFollow, setIsFollow] = useState(user.followers.list
+    .some((follower) => follower === session?.user.name));
   const [events, setEvents] = useState([]);
-
-  useEffect(() => {
-    setUsernameCookie(Cookies.get('username'));
-  }, [Cookies.get('login')]);
 
   useEffect(() => {
     if (!username) {
       return;
     }
 
-    setUser(fetchData.getUserByUsername(username));
     setEvents(fetchData.getEventsByUsername(username, pageActive));
-    setLoading(false);
   }, [username]);
 
   const handleLeftClick = () => {
@@ -47,73 +42,85 @@ export default function ProfileUserPage() {
     setPageActive(page);
   };
 
-  const handleFollow = () => {
-    setUser((userCurrent) => ({
-      ...userCurrent,
-      followers: [...userCurrent?.followers, usernameCookie],
-    }));
+  const handleFollow = async () => {
+    const response = await fetchApi(`/users/${session.user.name}/follow`, {
+      method: 'PUT',
+      body: {
+        username,
+      },
+      headers: {
+        accept: 'application/json',
+      },
+    });
 
-    const loginUser = fetchData.getUserByUsername(usernameCookie);
-    loginUser.following.push(user?.username);
+    if (response.success) {
+      setFollowersCount(followersCount + 1);
+      setIsFollow(true);
+    } else {
+      console.log(response.message);
+    }
   };
 
-  const handleUnfollow = () => {
-    setUser((userCurrent) => ({
-      ...userCurrent,
-      followers: userCurrent?.followers.filter((follower) => follower !== usernameCookie),
-    }));
+  const handleUnfollow = async () => {
+    const response = await fetchApi(`/users/${session.user.name}/follow`, {
+      method: 'DELETE',
+      body: {
+        username,
+      },
+      headers: {
+        accept: 'application/json',
+      },
+    });
 
-    const loginUser = fetchData.getUserByUsername(usernameCookie);
-    loginUser.followers = loginUser.following.filter((following) => following !== user?.username);
+    if (response.success) {
+      setFollowersCount(followersCount - 1);
+      setIsFollow(false);
+    } else {
+      console.log(response.message);
+    }
   };
 
   return (
     <>
       <header className="grid grid-cols-3 md:grid-cols-12 gap-2 md:gap-x-3 md:gap-y-0">
         <div className="row-span-2 sm:row-span-3 col-span-1 md:col-span-4 lg:col-span-3">
-          <div className={`relative w-20 h-20 sm:w-32 sm:h-32 md:w-40 md:h-40 xl:w-44 xl:h-44 2xl:w-52 2xl:h-52 rounded-full overflow-hidden ${loading ? 'bg-ev-dark-gray' : ''}`}>
-            {!loading && (
-              <Image
-                src={user?.avatar}
-                layout="fill"
-                loading="lazy"
-                alt="profile_avatar"
-              />
-            )}
+          <div className="relative w-20 h-20 sm:w-32 sm:h-32 md:w-40 md:h-40 xl:w-44 xl:h-44 2xl:w-52 2xl:h-52 rounded-full overflow-hidden">
+            <Image
+              src={user.avatar}
+              layout="fill"
+              loading="lazy"
+              alt="profile_avatar"
+            />
           </div>
         </div>
 
         <div className="self-center col-span-3 sm:col-span-2 md:col-span-5 order-3 sm:order-none">
-          <Title>{user?.name ?? ''}</Title>
+          <Title>{user.name}</Title>
         </div>
 
         <div className="self-center col-span-3 md:col-span-3 order-last md:order-none sm:mt-4 md:mt-0">
           <div className="xl:inline-block">
-            {usernameCookie && (
+            {session && (
               <>
-                {username === usernameCookie && (
+                {user.username === session.user.name && (
                   <Button typeButton="secondary" href="/profile/edit">Edit Profile</Button>
                 )}
-                {username !== usernameCookie
-                  && user?.followers?.some((followers) => followers === usernameCookie)
-                  && (
-                    <Button typeButton="secondary" onClick={handleUnfollow}>Unfollow</Button>
-                  )}
-                {username !== usernameCookie
-                && !user?.followers?.some((followers) => followers === usernameCookie)
-                && (
-                  <Button onClick={handleFollow}>Follow</Button>
+                {user.username !== session.user.name && isFollow && (
+                  <Button typeButton="secondary" onClick={handleUnfollow} full>Unfollow</Button>
+                )}
+                {user.username !== session.user.name && !isFollow && (
+                  <Button onClick={handleFollow} full>Follow</Button>
                 )}
               </>
             )}
 
-            {!usernameCookie && (
+            {!session && (
               <Button href="/login">Follow</Button>
             )}
           </div>
         </div>
 
-        <p className="col-span-2 col-span-3 md:col-span-8 lg:col-span-9 md:text-xl text-ev-dark-gray order-4 sm:order-none sm:col-span-2">{username ?? ''}</p>
+        <p className="col-span-2 col-span-3 md:col-span-8 lg:col-span-9 md:text-xl text-ev-dark-gray order-4 sm:order-none sm:col-span-2">{user.username}</p>
 
         <div className="col-span-2 row-span-2 sm:row-span-1 self-center md:self-start md:col-span-8 lg:col-span-9 order-2 sm:order-none">
           <div className="flex sm:gap-10 justify-between sm:justify-start">
@@ -122,12 +129,12 @@ export default function ProfileUserPage() {
               <p>event</p>
             </div>
             <div className="flex flex-col md:flex-row md:gap-2 items-center">
-              <p>{user?.followers?.length}</p>
+              <p>{followersCount}</p>
               <p>followers</p>
             </div>
             <div className="flex flex-col md:flex-row md:gap-2 items-center">
-              <p>{user?.following?.length}</p>
-              <p>following</p>
+              <p>{user.followings.count}</p>
+              <p>followings</p>
             </div>
           </div>
         </div>
@@ -164,4 +171,25 @@ export default function ProfileUserPage() {
       </div>
     </>
   );
+}
+
+export async function getServerSideProps(context) {
+  const { username } = context.query;
+
+  const userResponse = await fetchApi(`/users/${username}`);
+
+  if (!userResponse.success) {
+    return {
+      notFound: true,
+    };
+  }
+
+  const session = await getSession({ req: context.req });
+
+  return {
+    props: {
+      user: userResponse.data.user,
+      session,
+    },
+  };
 }

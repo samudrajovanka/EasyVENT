@@ -8,7 +8,7 @@ const UserFollowingSchema = new Schema({
     required: true,
     unique: true,
   },
-  following: [
+  followings: [
     {
       type: String,
     },
