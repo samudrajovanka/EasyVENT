@@ -7,15 +7,16 @@ import { useRouter } from 'next/dist/client/router';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { fetchApi } from '@lib/fetchingData';
-import { getSession } from 'next-auth/client';
+import { getSession, useSession } from 'next-auth/client';
 
-export default function ProfileUserPage({ session, user }) {
+export default function ProfileUserPage({ sessionProps, user }) {
   const [pageActive, setPageActive] = useState(1);
   const router = useRouter();
   const { username } = router.query;
+  const [session] = useSession();
   const [followersCount, setFollowersCount] = useState(user.followers.count);
   const [isFollow, setIsFollow] = useState(user.followers.list
-    .some((follower) => follower === session?.user.name));
+    .some((follower) => follower === sessionProps.user.name));
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
@@ -189,7 +190,7 @@ export async function getServerSideProps(context) {
   return {
     props: {
       user: userResponse.data.user,
-      session,
+      sessionProps: session,
     },
   };
 }

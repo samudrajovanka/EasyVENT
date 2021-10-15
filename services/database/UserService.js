@@ -4,6 +4,7 @@ import {
   EXIST_DATA_ERR,
   NOT_FOUND_ERR,
   TOKEN_INVALID_ERR,
+  USER_ACTIVE_ERR,
   VALIDATION_ERR,
 } from '@lib/constantErrorType';
 import User from '@models/UserModel';
@@ -15,6 +16,7 @@ import {
   EMAIL_EXIST_ERR_MSG,
   TOKEN_INVALID_ERR_MSG,
   USERNAME_EXIST_ERR_MSG,
+  USER_ACTIVE_ERR_MSG,
 } from '@lib/constantErrorMessage';
 import NotFoundError from '@exceptions/NotFoundError';
 import { mapUserData } from '@lib/formatData';
@@ -77,6 +79,13 @@ class UserService {
         name, email, username, password,
       } = decoded;
 
+      // check exist user
+      const isExistUser = await this.checkExistUser('email', email);
+
+      if (isExistUser) {
+        throw new InvariantError(USER_ACTIVE_ERR_MSG, USER_ACTIVE_ERR);
+      }
+
       const dateNow = new Date();
 
       const newUser = new User({
@@ -101,6 +110,10 @@ class UserService {
 
       return user._id;
     } catch (error) {
+      if (error.type === USER_ACTIVE_ERR) {
+        throw error;
+      }
+
       throw new InvariantError(TOKEN_INVALID_ERR_MSG, TOKEN_INVALID_ERR);
     }
   }

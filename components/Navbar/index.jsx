@@ -38,8 +38,12 @@ export default function Navbar() {
   };
 
   const handleLogout = async () => {
-    toggleDropdown();
     await signOut({ redirect: false });
+  };
+
+  const handleLogoutDropdown = async () => {
+    toggleDropdown();
+    await handleLogout();
   };
 
   return (
@@ -82,7 +86,7 @@ export default function Navbar() {
                 <div ref={dropdown}>
                   <Dropdown>
                     <DropdownItem href={`/${session.user.name}`} onClick={toggleDropdown}>Profile</DropdownItem>
-                    <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
+                    <DropdownItem onClick={handleLogoutDropdown}>Logout</DropdownItem>
                   </Dropdown>
                 </div>
               )}
@@ -99,7 +103,7 @@ export default function Navbar() {
       </div>
 
       {session && (
-        <div onClick={handleLogout} className="sm:hidden">
+        <div onClick={handleLogout} className="sm:hidden cursor-pointer">
           <FontAwesomeIcon icon={faSignOutAlt} size="lg" />
         </div>
       )}
