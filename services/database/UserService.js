@@ -19,7 +19,7 @@ import {
   USER_ACTIVE_ERR_MSG,
 } from '@lib/constantErrorMessage';
 import NotFoundError from '@exceptions/NotFoundError';
-import { mapUserData } from '@lib/formatData';
+import { mapUserData, mapUsersData } from '@lib/formatData';
 import UserFollowingsService from './UserFollowingsService';
 import UserFollowersService from './UserFollowersService';
 
@@ -116,6 +116,14 @@ class UserService {
 
       throw new InvariantError(TOKEN_INVALID_ERR_MSG, TOKEN_INVALID_ERR);
     }
+  }
+
+  async getUsers() {
+    const users = await User.find();
+
+    const usersFormated = mapUsersData(users);
+
+    return usersFormated;
   }
 
   async getUserByUsername({ username }) {
