@@ -5,7 +5,7 @@ import Title from '@components/Title';
 import { useRouter } from 'next/dist/client/router';
 import Link from 'next/link';
 import { useState } from 'react';
-import { signIn } from 'next-auth/client';
+import { getSession, signIn } from 'next-auth/client';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -107,4 +107,21 @@ export default function LoginPage() {
       </Card>
     </form>
   );
+}
+
+export async function getServerSideProps(context) {
+  const session = await getSession({ req: context.req });
+
+  if (session) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 }

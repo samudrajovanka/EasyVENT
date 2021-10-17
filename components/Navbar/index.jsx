@@ -96,8 +96,8 @@ export default function Navbar() {
 
         {!loading && !session && (
           <>
-            <Button typeButton="secondary" href="/login">Login</Button>
-            <Button href="/register">Register</Button>
+            <Button typeButton="secondary" href="/auth/login">Login</Button>
+            <Button href="/auth/register">Register</Button>
           </>
         )}
       </div>

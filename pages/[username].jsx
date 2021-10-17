@@ -116,7 +116,7 @@ export default function ProfileUserPage({ sessionProps, user }) {
             )}
 
             {!session && (
-              <Button href="/login">Follow</Button>
+              <Button href="/auth/login">Follow</Button>
             )}
           </div>
         </div>
@@ -144,30 +144,38 @@ export default function ProfileUserPage({ sessionProps, user }) {
       <div className="w-full h-0.5 bg-ev-gray my-10" />
 
       <div>
-        {events.maxPage > 1 && (
-          <div className="flex justify-center mb-10">
-            <Pagination
-              pageActive={pageActive}
-              endPage={events.maxPage}
-              leftClick={handleLeftClick}
-              rightClick={handleRightClick}
-              pageClick={handlePageClick}
-            />
-          </div>
+        {events.length > 0 && (
+          <>
+            {events.maxPage > 1 && (
+              <div className="flex justify-center mb-10">
+                <Pagination
+                  pageActive={pageActive}
+                  endPage={events.maxPage}
+                  leftClick={handleLeftClick}
+                  rightClick={handleRightClick}
+                  pageClick={handlePageClick}
+                />
+              </div>
+            )}
+
+            <EventList events={events?.data?.events ?? []} noHeader />
+
+            {events.maxPage > 1 && (
+              <div className="flex justify-center mt-10">
+                <Pagination
+                  pageActive={pageActive}
+                  endPage={events.maxPage}
+                  leftClick={handleLeftClick}
+                  rightClick={handleRightClick}
+                  pageClick={handlePageClick}
+                />
+              </div>
+            )}
+          </>
         )}
 
-        <EventList events={events?.data?.events ?? []} noHeader />
-
-        {events.maxPage > 1 && (
-          <div className="flex justify-center mt-10">
-            <Pagination
-              pageActive={pageActive}
-              endPage={events.maxPage}
-              leftClick={handleLeftClick}
-              rightClick={handleRightClick}
-              pageClick={handlePageClick}
-            />
-          </div>
+        {events?.data?.events.length === 0 && (
+          <p className="text-xl text-center mb-0 sm:mb-16 lg:mb-52">No events here</p>
         )}
       </div>
     </>
