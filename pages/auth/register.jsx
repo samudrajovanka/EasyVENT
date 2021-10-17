@@ -15,6 +15,7 @@ import {
   USERNAME_REGEX_ERR_MSG,
 } from '@lib/constantErrorMessage';
 import { isAlphanumericWithSpace, isEmail, isUsername } from '@lib/typeChecking';
+import { getSession } from 'next-auth/client';
 
 export default function RegisterPage() {
   const [name, setName] = useState('');
@@ -216,4 +217,21 @@ export default function RegisterPage() {
       </Card>
     </form>
   );
+}
+
+export async function getServerSideProps(context) {
+  const session = await getSession({ req: context.req });
+
+  if (session) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 }
