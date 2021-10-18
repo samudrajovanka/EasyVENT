@@ -42,11 +42,11 @@ export default function BottomNavigation() {
 
       {!loading && !session && (
         <>
-          <NavLink href="/login" active={router.pathname === '/login'}>
+          <NavLink href="/auth/login" active={router.pathname === '/auth/login'}>
             <FontAwesomeIcon icon={faSignInAlt} size="lg" />
           </NavLink>
 
-          <NavLink href="/register" active={router.pathname === '/register'}>
+          <NavLink href="/auth/register" active={router.pathname === '/auth/register'}>
             <FontAwesomeIcon icon={faUserPlus} size="lg" />
           </NavLink>
         </>
