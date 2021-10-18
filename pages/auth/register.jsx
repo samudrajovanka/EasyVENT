@@ -128,7 +128,7 @@ export default function RegisterPage() {
       });
 
       if (response.success) {
-        router.replace('/login');
+        router.replace('/auth/login');
       } else if (!response.success) {
         if (response.type === VALIDATION_ERR) {
           if (response.message === NAME_ALPHANUMERIC_ERR_MSG) {
