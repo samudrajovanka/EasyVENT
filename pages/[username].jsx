@@ -15,7 +15,7 @@ export default function ProfileUserPage({ sessionProps, userProps }) {
   const { username } = router.query;
   const [user, setUser] = useState(userProps);
   const [isFollow, setIsFollow] = useState(user.followers.list
-    .some((follower) => follower === sessionProps.user.name));
+    .some((follower) => follower === sessionProps?.user.name));
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
@@ -47,7 +47,7 @@ export default function ProfileUserPage({ sessionProps, userProps }) {
   };
 
   const handleFollow = async () => {
-    const response = await fetchApi(`/users/${sessionProps.user.name}/follow`, {
+    const response = await fetchApi(`/users/${sessionProps?.user.name}/follow`, {
       method: 'PUT',
       body: {
         username,
@@ -72,7 +72,7 @@ export default function ProfileUserPage({ sessionProps, userProps }) {
   };
 
   const handleUnfollow = async () => {
-    const response = await fetchApi(`/users/${sessionProps.user.name}/follow`, {
+    const response = await fetchApi(`/users/${sessionProps?.user.name}/follow`, {
       method: 'DELETE',
       body: {
         username,
