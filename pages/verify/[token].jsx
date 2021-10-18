@@ -18,7 +18,7 @@ export default function VerifyPage() {
       });
 
       if (response.success) {
-        router.replace('/login');
+        router.replace('/auth/login');
       } else if (!response.success) {
         setIsSuccessVerify(false);
 

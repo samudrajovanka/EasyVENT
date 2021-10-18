@@ -7,14 +7,13 @@ import { useRouter } from 'next/dist/client/router';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { fetchApi } from '@lib/fetchingData';
-import { getSession, useSession } from 'next-auth/client';
+import { getSession } from 'next-auth/client';
 
-export default function ProfileUserPage({ sessionProps, user }) {
+export default function ProfileUserPage({ sessionProps, userProps }) {
   const [pageActive, setPageActive] = useState(1);
   const router = useRouter();
   const { username } = router.query;
-  const [session] = useSession();
-  const [followersCount, setFollowersCount] = useState(user.followers.count);
+  const [user, setUser] = useState(userProps);
   const [isFollow, setIsFollow] = useState(user.followers.list
     .some((follower) => follower === sessionProps.user.name));
   const [events, setEvents] = useState([]);
@@ -26,6 +25,10 @@ export default function ProfileUserPage({ sessionProps, user }) {
 
     setEvents(fetchData.getEventsByUsername(username, pageActive));
   }, [username]);
+
+  useEffect(() => {
+    setUser(userProps);
+  }, [userProps]);
 
   const handleLeftClick = () => {
     if (pageActive > 1) {
@@ -44,7 +47,7 @@ export default function ProfileUserPage({ sessionProps, user }) {
   };
 
   const handleFollow = async () => {
-    const response = await fetchApi(`/users/${session.user.name}/follow`, {
+    const response = await fetchApi(`/users/${sessionProps.user.name}/follow`, {
       method: 'PUT',
       body: {
         username,
@@ -55,7 +58,13 @@ export default function ProfileUserPage({ sessionProps, user }) {
     });
 
     if (response.success) {
-      setFollowersCount(followersCount + 1);
+      setUser((currentUser) => ({
+        ...currentUser,
+        followers: {
+          ...currentUser.followers,
+          count: currentUser.followers.count + 1,
+        },
+      }));
       setIsFollow(true);
     } else {
       console.log(response.message);
@@ -63,7 +72,7 @@ export default function ProfileUserPage({ sessionProps, user }) {
   };
 
   const handleUnfollow = async () => {
-    const response = await fetchApi(`/users/${session.user.name}/follow`, {
+    const response = await fetchApi(`/users/${sessionProps.user.name}/follow`, {
       method: 'DELETE',
       body: {
         username,
@@ -74,7 +83,13 @@ export default function ProfileUserPage({ sessionProps, user }) {
     });
 
     if (response.success) {
-      setFollowersCount(followersCount - 1);
+      setUser((currentUser) => ({
+        ...currentUser,
+        followers: {
+          ...currentUser.followers,
+          count: currentUser.followers.count - 1,
+        },
+      }));
       setIsFollow(false);
     } else {
       console.log(response.message);
@@ -101,21 +116,21 @@ export default function ProfileUserPage({ sessionProps, user }) {
 
         <div className="self-center col-span-3 md:col-span-3 order-last md:order-none sm:mt-4 md:mt-0">
           <div className="xl:inline-block">
-            {session && (
+            {sessionProps && (
               <>
-                {user.username === session.user.name && (
+                {user.username === sessionProps.user.name && (
                   <Button typeButton="secondary" href="/profile/edit">Edit Profile</Button>
                 )}
-                {user.username !== session.user.name && isFollow && (
+                {user.username !== sessionProps.user.name && isFollow && (
                   <Button typeButton="secondary" onClick={handleUnfollow} full>Unfollow</Button>
                 )}
-                {user.username !== session.user.name && !isFollow && (
+                {user.username !== sessionProps.user.name && !isFollow && (
                   <Button onClick={handleFollow} full>Follow</Button>
                 )}
               </>
             )}
 
-            {!session && (
+            {!sessionProps && (
               <Button href="/auth/login">Follow</Button>
             )}
           </div>
@@ -130,7 +145,7 @@ export default function ProfileUserPage({ sessionProps, user }) {
               <p>event</p>
             </div>
             <div className="flex flex-col md:flex-row md:gap-2 items-center">
-              <p>{followersCount}</p>
+              <p>{user.followers.count}</p>
               <p>followers</p>
             </div>
             <div className="flex flex-col md:flex-row md:gap-2 items-center">
@@ -197,7 +212,7 @@ export async function getServerSideProps(context) {
 
   return {
     props: {
-      user: userResponse.data.user,
+      userProps: userResponse.data.user,
       sessionProps: session,
     },
   };
