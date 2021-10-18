@@ -10,11 +10,13 @@ import DropdownItem from '@components/DropdownItem';
 import { useEffect, useRef, useState } from 'react';
 import NavLink from '@components/NavLink';
 import { signOut, useSession } from 'next-auth/client';
+import { useRouter } from 'next/dist/client/router';
 
 export default function Navbar() {
   const [session, loading] = useSession();
   const [isOpenDropdown, setIsOpenDropdown] = useState(false);
   const dropdown = useRef(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (!isOpenDropdown) return;
@@ -38,7 +40,11 @@ export default function Navbar() {
   };
 
   const handleLogout = async () => {
-    await signOut({ redirect: false });
+    if (router.pathname !== '/') {
+      await signOut({ callbackUrl: '/' });
+    } else {
+      await signOut({ redirect: false });
+    }
   };
 
   const handleLogoutDropdown = async () => {

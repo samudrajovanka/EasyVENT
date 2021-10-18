@@ -99,7 +99,7 @@ export default function LoginPage() {
           <Button type="submit" full>Login</Button>
           <div className="flex gap-1 text-sm">
             <p>Dont&apos;t have an account?</p>
-            <Link href="/register">
+            <Link href="/auth/register">
               <a className="text-ev-blue">Register here</a>
             </Link>
           </div>

@@ -209,7 +209,7 @@ export default function RegisterPage() {
           <Button type="submit" full>Register</Button>
           <div className="flex gap-1 text-sm">
             <p>Have an account?</p>
-            <Link href="/login">
+            <Link href="/auth/login">
               <a className="text-ev-blue">Login here</a>
             </Link>
           </div>
