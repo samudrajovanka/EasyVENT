@@ -15,3 +15,6 @@ export const USER_TO_UNFOLLOWER_NOT_FOUND_ERR_MSG = 'User to unfollower not foun
 export const USER_TO_UNFOLLOWING_NOT_FOUND_ERR_MSG = 'User to unfollowing not found';
 export const USER_CANT_SAME_ERR_MSG = 'Username can\'t be the same';
 export const USER_ACTIVE_ERR_MSG = 'User already active';
+export const FILE_TYPE_ERR_MSG = 'File type is not allowed';
+export const NO_FILE_ERR_MSG = 'No file accepted';
+export const OLD_PASSWORD_ERR_MSG = 'Old password incorrect';

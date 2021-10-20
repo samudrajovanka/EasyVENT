@@ -1,6 +1,6 @@
 import Button from '@components/Button';
 import Card from '@components/Card';
-import { TOKEN_INVALID_ERR, USER_ACTIVE_ERR } from '@lib/constantErrorType';
+import { TOKEN_INVALID_ERR, USER_ACTIVE_ERR } from '@constants/errorType';
 import { fetchApi } from '@lib/fetchingData';
 import { useRouter } from 'next/dist/client/router';
 import { useEffect, useState } from 'react';

@@ -1,4 +1,4 @@
-import { INVARIANT_ERR } from '@lib/constantErrorType';
+import { INVARIANT_ERR } from '@constants/errorType';
 import ClientError from './ClientError';
 
 class InvariantError extends ClientError {

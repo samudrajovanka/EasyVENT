@@ -6,14 +6,14 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/dist/client/router';
 import { fetchApi } from '@lib/fetchingData';
-import { EXIST_DATA_ERR, VALIDATION_ERR } from '@lib/constantErrorType';
+import { EXIST_DATA_ERR, VALIDATION_ERR } from '@constants/errorType';
 import {
   CONFIRM_PASSWORD_ERR_MSG,
   EMAIL_EXIST_ERR_MSG,
   NAME_ALPHANUMERIC_ERR_MSG,
   USERNAME_EXIST_ERR_MSG,
   USERNAME_REGEX_ERR_MSG,
-} from '@lib/constantErrorMessage';
+} from 'constants/errorMessage';
 import { isAlphanumericWithSpace, isEmail, isUsername } from '@lib/typeChecking';
 import { getSession } from 'next-auth/client';
 

@@ -11,6 +11,8 @@ export default function ProfileSearch({ data }) {
               src={data.avatar}
               layout="fill"
               loading="lazy"
+              objectFit="cover"
+              alt="profile_avatar"
             />
           </div>
 

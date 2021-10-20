@@ -6,8 +6,8 @@ import {
   USER_FOLLOWING_NOT_FOUND_ERR_MSG,
   USER_TO_FOLLOWING_NOT_FOUND_ERR_MSG,
   USER_TO_UNFOLLOWING_NOT_FOUND_ERR_MSG,
-} from '@lib/constantErrorMessage';
-import { NOT_FOUND_ERR } from '@lib/constantErrorType';
+} from '@constants/errorMessage';
+import { NOT_FOUND_ERR } from '@constants/errorType';
 import UserFollowings from '@models/UserFollowingsModel';
 import UserService from './UserService';
 

@@ -1,4 +1,4 @@
-import { AUTHENTICATION_ERR } from '@lib/constantErrorType';
+import { AUTHENTICATION_ERR } from '@constants/errorType';
 import ClientError from './ClientError';
 
 class AuthenticationError extends ClientError {

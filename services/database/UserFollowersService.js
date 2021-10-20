@@ -3,8 +3,8 @@ import NotFoundError from '@exceptions/NotFoundError';
 import {
   USER_FOLLOWER_NOT_FOUND_ERR_MSG,
   USER_TO_FOLLOWER_NOT_FOUND_ERR_MSG,
-} from '@lib/constantErrorMessage';
-import { NOT_FOUND_ERR } from '@lib/constantErrorType';
+} from '@constants/errorMessage';
+import { NOT_FOUND_ERR } from '@constants/errorType';
 import UserFollowers from '@models/UserFollowersModel';
 import UserService from './UserService';
 
