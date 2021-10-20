@@ -15,7 +15,10 @@ module.exports = (phase) => {
         HOME_URL: 'http://localhost:3000',
       },
       images: {
-        domains: ['avatars.dicebear.com'],
+        domains: [
+          'avatars.dicebear.com',
+          'firebasestorage.googleapis.com',
+        ],
       },
     };
   }
@@ -33,7 +36,10 @@ module.exports = (phase) => {
       HOME_URL: 'https://easyvent.vercel.app',
     },
     images: {
-      domains: ['avatars.dicebear.com'],
+      domains: [
+        'avatars.dicebear.com',
+        'firebasestorage.googleapis.com',
+      ],
     },
   };
 };

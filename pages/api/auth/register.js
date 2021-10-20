@@ -1,8 +1,8 @@
 import ClientError from '@exceptions/ClientError';
 import InvariantError from '@exceptions/InvariantError';
 import connectDb from '@lib/connectDb';
-import { NAME_ALPHANUMERIC_ERR_MSG, USERNAME_REGEX_ERR_MSG } from '@lib/constantErrorMessage';
-import { VALIDATION_ERR } from '@lib/constantErrorType';
+import { NAME_ALPHANUMERIC_ERR_MSG, USERNAME_REGEX_ERR_MSG } from '@constants/errorMessage';
+import { VALIDATION_ERR } from '@constants/errorType';
 import { clientErrRes, notAllowedErrRes, serverErrRes } from '@lib/errorResponse';
 import { isAlphanumericWithSpace, isUsername } from '@lib/typeChecking';
 import UserService from '@servicesDb/UserService';

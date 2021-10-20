@@ -8,7 +8,7 @@ import bcrypt from 'bcrypt';
 import {
   LOGIN_FAILED_ERR_MSG,
   USER_NOT_FOUND_ERR_MSG,
-} from '@lib/constantErrorMessage';
+} from '@constants/errorMessage';
 import userValidation from '@validations/user';
 
 export default connectDb(NextAuth({

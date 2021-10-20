@@ -105,6 +105,7 @@ export default function ProfileUserPage({ sessionProps, userProps }) {
               src={user.avatar}
               layout="fill"
               loading="lazy"
+              objectFit="cover"
               alt="profile_avatar"
             />
           </div>

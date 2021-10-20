@@ -84,6 +84,7 @@ export default function Navbar() {
                   src={session.user.image}
                   layout="fill"
                   loading="lazy"
+                  objectFit="cover"
                   alt="profile_avatar"
                 />
               </button>

@@ -23,7 +23,8 @@ export default function CardEvent({ event, noHeader }) {
                   src={user.avatar}
                   layout="fill"
                   loading="lazy"
-                  alt="banner_card"
+                  objectFit="cover"
+                  alt="profile_avatar"
                 />
               </div>
               <div className="flex flex-col">
@@ -38,7 +39,8 @@ export default function CardEvent({ event, noHeader }) {
               src={event.banner}
               layout="fill"
               loading="lazy"
-              alt="profile_avatar"
+              objectFit="cover"
+              alt="banner_card"
             />
           </div>
 

@@ -1,4 +1,4 @@
-import { CLIENT_ERR } from '@lib/constantErrorType';
+import { CLIENT_ERR } from '@constants/errorType';
 
 class ClientError extends Error {
   constructor(message, type = CLIENT_ERR, statusCode = 400) {

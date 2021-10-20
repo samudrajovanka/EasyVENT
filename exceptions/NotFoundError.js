@@ -1,4 +1,4 @@
-import { NOT_FOUND_ERR } from '@lib/constantErrorType';
+import { NOT_FOUND_ERR } from '@constants/errorType';
 import ClientError from './ClientError';
 
 class NotFoundError extends ClientError {

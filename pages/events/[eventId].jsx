@@ -39,6 +39,7 @@ export default function DetailEventPage() {
                 src={event?.banner}
                 layout="fill"
                 loading="lazy"
+                objectFit="cover"
                 alt="banner_event"
               />
             </div>

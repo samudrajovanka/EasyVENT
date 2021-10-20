@@ -33,6 +33,7 @@ export default function BottomNavigation() {
                 src={session.user.image}
                 layout="fill"
                 loading="lazy"
+                objectFit="cover"
                 alt="profile_avatar"
               />
             </div>
