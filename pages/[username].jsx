@@ -52,9 +52,6 @@ export default function ProfileUserPage({ sessionProps, userProps }) {
       body: {
         username,
       },
-      headers: {
-        accept: 'application/json',
-      },
     });
 
     if (response.success) {
@@ -76,9 +73,6 @@ export default function ProfileUserPage({ sessionProps, userProps }) {
       method: 'DELETE',
       body: {
         username,
-      },
-      headers: {
-        accept: 'application/json',
       },
     });
 

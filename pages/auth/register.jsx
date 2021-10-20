@@ -122,9 +122,6 @@ export default function RegisterPage() {
           password,
           confirmPassword,
         },
-        headers: {
-          accept: 'application/json',
-        },
       });
 
       if (response.success) {
