@@ -11,23 +11,33 @@ const UserContext = createContext({
   removeUser: () => {},
   followUser: (username) => {},
   unfollowUser: (username) => {},
+  isLoading: true,
+  isAuthenticated: false
 });
 
 export const UserContextProvider = ({ children }) => {
   const [user, setUser] = useState();
   const [session, loading] = useSession();
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(async () => {
-    if (session) {
-      setUserByUsername(session.user.name);
+    if (!loading && session) {
+      await setUserByUsername(session.user.name);
+    } else if (!loading) {
+      setIsLoading(false);
     }
-  }, [session]);
+  }, [loading]);
 
   const setUserByUsername = async (username) => {
+    setIsLoading(true);
+
     const response = await fetchApi(`/users/${username}`);
 
     if (response.success) {
       setUser(response.data.user);
+      setIsAuthenticated(true);
+      setIsLoading(false);
     }
     return response;
   };
@@ -57,7 +67,10 @@ export const UserContextProvider = ({ children }) => {
   }
 
   const removeUser = () => {
+    setIsLoading(true);
+    setIsAuthenticated(false);
     setUser(null);
+    setIsLoading(false);
   }
 
   const updatePassword = async ({ oldPassword, newPassword, confirmNewPassword }) => {
@@ -123,6 +136,8 @@ export const UserContextProvider = ({ children }) => {
     removeUser,
     followUser,
     unfollowUser,
+    isLoading,
+    isAuthenticated,
   };
 
   return (

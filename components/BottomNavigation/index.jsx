@@ -5,13 +5,11 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from 'next/dist/client/router';
 import Image from 'next/image';
-import { useSession } from 'next-auth/client';
 import { useContext } from 'react';
 import UserContext from '@context/userContext';
 
 export default function BottomNavigation() {
   const userCtx = useContext(UserContext);
-  const [session, loading] = useSession();
   const router = useRouter();
 
   return (
@@ -24,7 +22,7 @@ export default function BottomNavigation() {
         <FontAwesomeIcon icon={faSearch} size="lg" />
       </NavLink>
 
-      {session && userCtx.user && (
+      {!userCtx.isLoading && userCtx.isAuthenticated && (
         <>
           <NavLink href="/create" active={router.pathname === '/create'}>
             <FontAwesomeIcon icon={faPlusSquare} size="lg" />
@@ -44,7 +42,7 @@ export default function BottomNavigation() {
         </>
       )}
 
-      {!loading && !session && (
+      {!userCtx.isLoading && !userCtx.isAuthenticated && (
         <>
           <NavLink href="/auth/login" active={router.pathname === '/auth/login'}>
             <FontAwesomeIcon icon={faSignInAlt} size="lg" />

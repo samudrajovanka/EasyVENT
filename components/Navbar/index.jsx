@@ -14,12 +14,11 @@ import {
   useState,
 } from 'react';
 import NavLink from '@components/NavLink';
-import { signOut, useSession } from 'next-auth/client';
+import { signOut } from 'next-auth/client';
 import { useRouter } from 'next/dist/client/router';
 import UserContext from '@context/userContext';
 
 export default function Navbar() {
-  const [session, loading] = useSession();
   const [isOpenDropdown, setIsOpenDropdown] = useState(false);
   const dropdown = useRef(null);
   const router = useRouter();
@@ -62,7 +61,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className={`sticky top-0 z-50 bg-white w-full py-3 border-b-2 border-ev-gray px-4 md:px-12 lg:px-24 xl:px-48 2xl:px-56 flex ${session ? 'justify-between' : 'justify-start sm:justify-between'} items-center`}>
+    <nav className={`sticky top-0 z-50 bg-white w-full py-3 border-b-2 border-ev-gray px-4 md:px-12 lg:px-24 xl:px-48 2xl:px-56 flex ${userCtx.user ? 'justify-between' : 'justify-start sm:justify-between'} items-center`}>
       <Link href="/">
         <a>
           <EasyventIcon />
@@ -78,7 +77,7 @@ export default function Navbar() {
           <FontAwesomeIcon icon={faSearch} />
         </NavLink>
 
-        {session && userCtx.user && (
+        {!userCtx.isLoading && userCtx.isAuthenticated && (
           <>
             <NavLink href="/create" active>
               <FontAwesomeIcon icon={faPlusSquare} />
@@ -110,7 +109,7 @@ export default function Navbar() {
           </>
         )}
 
-        {!loading && !session && !userCtx.user && (
+        {!userCtx.isLoading && !userCtx.isAuthenticated && (
           <>
             <Button typeButton="secondary" href="/auth/login">Login</Button>
             <Button href="/auth/register">Register</Button>
@@ -118,7 +117,7 @@ export default function Navbar() {
         )}
       </div>
 
-      {session && (
+      {userCtx.user && (
         <div onClick={handleLogout} className="sm:hidden cursor-pointer">
           <FontAwesomeIcon icon={faSignOutAlt} size="lg" />
         </div>
