@@ -24,6 +24,7 @@
     "jsx-a11y/click-events-have-key-events": "off",
     "class-methods-use-this": "off",
     "no-underscore-dangle": "off",
-    "import/prefer-default-export": "off"
+    "import/prefer-default-export": "off",
+    "react/jsx-filename-extension": "off"
   }
 }

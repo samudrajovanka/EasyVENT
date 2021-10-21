@@ -5,11 +5,13 @@ import Title from '@components/Title';
 import fetchData from '@lib/fetchData';
 import { useRouter } from 'next/dist/client/router';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { fetchApi } from '@lib/fetchingData';
 import { getSession } from 'next-auth/client';
+import UserContext from '@context/userContext';
 
 export default function ProfileUserPage({ sessionProps, userProps }) {
+  const userCtx = useContext(UserContext);
   const [pageActive, setPageActive] = useState(1);
   const router = useRouter();
   const { username } = router.query;
@@ -47,12 +49,7 @@ export default function ProfileUserPage({ sessionProps, userProps }) {
   };
 
   const handleFollow = async () => {
-    const response = await fetchApi(`/users/${sessionProps?.user.name}/follow`, {
-      method: 'PUT',
-      body: {
-        username,
-      },
-    });
+    const response = await userCtx.followUser(username);
 
     if (response.success) {
       setUser((currentUser) => ({
@@ -69,12 +66,7 @@ export default function ProfileUserPage({ sessionProps, userProps }) {
   };
 
   const handleUnfollow = async () => {
-    const response = await fetchApi(`/users/${sessionProps?.user.name}/follow`, {
-      method: 'DELETE',
-      body: {
-        username,
-      },
-    });
+    const response = await userCtx.unfollowUser(username);
 
     if (response.success) {
       setUser((currentUser) => ({
@@ -111,21 +103,21 @@ export default function ProfileUserPage({ sessionProps, userProps }) {
 
         <div className="self-center col-span-3 md:col-span-3 order-last md:order-none sm:mt-4 md:mt-0">
           <div className="xl:inline-block">
-            {sessionProps && (
+            {sessionProps && userCtx.user && (
               <>
-                {user.username === sessionProps.user.name && (
+                {user.username === userCtx.user?.username && (
                   <Button typeButton="secondary" href="/profile/edit">Edit Profile</Button>
                 )}
-                {user.username !== sessionProps.user.name && isFollow && (
+                {user.username !== userCtx.user?.username && isFollow && (
                   <Button typeButton="secondary" onClick={handleUnfollow} full>Unfollow</Button>
                 )}
-                {user.username !== sessionProps.user.name && !isFollow && (
+                {user.username !== userCtx.user?.username && !isFollow && (
                   <Button onClick={handleFollow} full>Follow</Button>
                 )}
               </>
             )}
 
-            {!sessionProps && (
+            {!sessionProps && !userCtx.user && (
               <Button href="/auth/login">Follow</Button>
             )}
           </div>

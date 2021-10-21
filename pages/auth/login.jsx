@@ -4,8 +4,9 @@ import LabelInput from '@components/LabelInput';
 import Title from '@components/Title';
 import { useRouter } from 'next/dist/client/router';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { getSession, signIn } from 'next-auth/client';
+import UserContext from '@context/userContext';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -16,6 +17,7 @@ export default function LoginPage() {
     password: '',
   });
   const router = useRouter();
+  const userCtx = useContext(UserContext);
 
   const setErrorMessage = (field, message) => {
     setError((errorCurrent) => ({
@@ -60,6 +62,7 @@ export default function LoginPage() {
       });
 
       if (!response.error) {
+        userCtx.setUserByUsername(username);
         router.replace('/');
       } else {
         setErrorMessage('login', response.error);

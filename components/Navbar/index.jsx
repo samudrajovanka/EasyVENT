@@ -7,16 +7,23 @@ import Image from 'next/image';
 import { faPlusSquare } from '@fortawesome/free-regular-svg-icons';
 import Dropdown from '@components/Dropdown';
 import DropdownItem from '@components/DropdownItem';
-import { useEffect, useRef, useState } from 'react';
+import {
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import NavLink from '@components/NavLink';
 import { signOut, useSession } from 'next-auth/client';
 import { useRouter } from 'next/dist/client/router';
+import UserContext from '@context/userContext';
 
 export default function Navbar() {
   const [session, loading] = useSession();
   const [isOpenDropdown, setIsOpenDropdown] = useState(false);
   const dropdown = useRef(null);
   const router = useRouter();
+  const userCtx = useContext(UserContext);
 
   useEffect(() => {
     if (!isOpenDropdown) return;
@@ -42,8 +49,10 @@ export default function Navbar() {
   const handleLogout = async () => {
     if (router.pathname !== '/') {
       await signOut({ callbackUrl: '/' });
+      await userCtx.removeUser();
     } else {
       await signOut({ redirect: false });
+      await userCtx.removeUser();
     }
   };
 
@@ -69,7 +78,7 @@ export default function Navbar() {
           <FontAwesomeIcon icon={faSearch} />
         </NavLink>
 
-        {session && (
+        {session && userCtx.user && (
           <>
             <NavLink href="/create" active>
               <FontAwesomeIcon icon={faPlusSquare} />
@@ -81,7 +90,7 @@ export default function Navbar() {
                 onClick={toggleDropdown}
               >
                 <Image
-                  src={session.user.image}
+                  src={userCtx.user.avatar}
                   layout="fill"
                   loading="lazy"
                   objectFit="cover"
@@ -92,7 +101,7 @@ export default function Navbar() {
               {isOpenDropdown && (
                 <div ref={dropdown}>
                   <Dropdown>
-                    <DropdownItem href={`/${session.user.name}`} onClick={toggleDropdown}>Profile</DropdownItem>
+                    <DropdownItem href={`/${userCtx.user?.username}`} onClick={toggleDropdown}>Profile</DropdownItem>
                     <DropdownItem onClick={handleLogoutDropdown}>Logout</DropdownItem>
                   </Dropdown>
                 </div>
@@ -101,7 +110,7 @@ export default function Navbar() {
           </>
         )}
 
-        {!loading && !session && (
+        {!loading && !session && !userCtx.user && (
           <>
             <Button typeButton="secondary" href="/auth/login">Login</Button>
             <Button href="/auth/register">Register</Button>

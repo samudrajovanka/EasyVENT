@@ -214,7 +214,7 @@ class UserService {
     };
     await user.save();
 
-    return user;
+    return mapUserData(user);
   }
 
   async updateUserPassword(username, { oldPassword, newPassword, confirmNewPassword }) {

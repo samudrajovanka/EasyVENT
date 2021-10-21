@@ -54,13 +54,16 @@ async function handler(req, res) {
           'remove-avatar': removeAvatar = false,
         } = req.query;
 
-        await userService.updateUserProfile(usernameUser, {
+        const user = await userService.updateUserProfile(usernameUser, {
           username, name, email, avatarFile: avatar, removeAvatar: removeAvatar === 'true',
         });
 
         return res.status(200).json({
           success: true,
           message: 'Profile successfull updated',
+          data: {
+            user,
+          },
         });
       } catch (error) {
         if (error instanceof ClientError) {

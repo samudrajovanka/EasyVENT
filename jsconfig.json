@@ -9,7 +9,8 @@
       "@servicesStorage/*": ["services/storage/*"],
       "@exceptions/*": ["exceptions/*"],
       "@validations/*": ["validations/*"],
-      "@constants/*": ["constants/*"]
+      "@constants/*": ["constants/*"],
+      "@context/*": ["context/*"]
     }
   }
 }
