@@ -2,7 +2,7 @@ import Button from '@components/Button';
 import Card from '@components/Card';
 import LabelInput from '@components/LabelInput';
 import Title from '@components/Title';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/dist/client/router';
 import { fetchApi } from '@lib/fetchingData';
@@ -16,6 +16,7 @@ import {
 } from 'constants/errorMessage';
 import { isAlphanumericWithSpace, isEmail, isUsername } from '@lib/typeChecking';
 import { getSession } from 'next-auth/client';
+import NotificationContext from '@context/notificationContext';
 
 export default function RegisterPage() {
   const [name, setName] = useState('');
@@ -31,7 +32,9 @@ export default function RegisterPage() {
     password: '',
     confirmPassword: '',
   });
+  const [loadingRegister, setLoadingRegister] = useState(false);
   const router = useRouter();
+  const notificationCtx = useContext(NotificationContext);
 
   const setErrorMessage = (field, message) => {
     setError((errorCurrent) => ({
@@ -109,7 +112,7 @@ export default function RegisterPage() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-
+    setLoadingRegister(true);
     const isValid = validateForm();
 
     if (isValid) {
@@ -124,8 +127,13 @@ export default function RegisterPage() {
         },
       });
 
+      setLoadingRegister(false);
       if (response.success) {
         router.replace('/auth/login');
+        notificationCtx.showNotification({
+          message: 'Check your email for activation account',
+          status: notificationCtx.status.SUCCESS,
+        });
       } else if (!response.success) {
         if (response.type === VALIDATION_ERR) {
           if (response.message === NAME_ALPHANUMERIC_ERR_MSG) {
@@ -143,6 +151,8 @@ export default function RegisterPage() {
           setErrorMessage('register', 'Something when wrong, try again!');
         }
       }
+    } else {
+      setLoadingRegister(false);
     }
   };
 
@@ -203,7 +213,7 @@ export default function RegisterPage() {
         </div>
 
         <div className="flex flex-col items-center gap-3">
-          <Button type="submit" full>Register</Button>
+          <Button type="submit" full loading={loadingRegister}>Register</Button>
           <div className="flex gap-1 text-sm">
             <p>Have an account?</p>
             <Link href="/auth/login">
