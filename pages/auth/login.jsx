@@ -7,17 +7,19 @@ import Link from 'next/link';
 import { useContext, useState } from 'react';
 import { getSession, signIn } from 'next-auth/client';
 import UserContext from '@context/userContext';
+import NotificationContext from '@context/notificationContext';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [loadingLogin, setLoadingLogin] = useState(false);
   const [error, setError] = useState({
-    login: '',
     username: '',
     password: '',
   });
   const router = useRouter();
   const userCtx = useContext(UserContext);
+  const notificationCtx = useContext(NotificationContext);
 
   const setErrorMessage = (field, message) => {
     setError((errorCurrent) => ({
@@ -50,7 +52,7 @@ export default function LoginPage() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setErrorMessage('login', '');
+    setLoadingLogin(true);
 
     const isValid = validateForm();
 
@@ -61,12 +63,18 @@ export default function LoginPage() {
         password,
       });
 
+      setLoadingLogin(false);
       if (!response.error) {
         userCtx.setUserByUsername(username);
         router.replace('/');
       } else {
-        setErrorMessage('login', response.error);
+        notificationCtx.showNotification({
+          message: response.error,
+          status: notificationCtx.status.DANGER,
+        });
       }
+    } else {
+      setLoadingLogin(false);
     }
   };
 
@@ -76,7 +84,6 @@ export default function LoginPage() {
         <Title>Login</Title>
 
         <div className="flex flex-col gap-4">
-          {error.login && <p className="text-ev-red">{error.login}</p>}
           <LabelInput
             label="Username"
             id="username"
@@ -99,7 +106,7 @@ export default function LoginPage() {
         </div>
 
         <div className="flex flex-col items-center gap-3">
-          <Button type="submit" full>Login</Button>
+          <Button type="submit" full loading={loadingLogin}>Login</Button>
           <div className="flex gap-1 text-sm">
             <p>Dont&apos;t have an account?</p>
             <Link href="/auth/register">

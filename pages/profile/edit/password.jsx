@@ -6,12 +6,15 @@ import { useContext, useState } from 'react';
 import { OLD_PASSWORD_ERR } from '@constants/errorType';
 import { CONFIRM_PASSWORD_ERR_MSG } from '@constants/errorMessage';
 import UserContext from '@context/userContext';
+import NotificationContext from '@context/notificationContext';
 
 export default function EditPasswordPage() {
   const userCtx = useContext(UserContext);
+  const notificationCtx = useContext(NotificationContext);
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [error, setError] = useState({
     oldPassword: '',
     newPassword: '',
@@ -63,6 +66,7 @@ export default function EditPasswordPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoadingUpdate(true);
 
     const isValid = validateFormm();
 
@@ -73,6 +77,7 @@ export default function EditPasswordPage() {
         confirmNewPassword,
       });
 
+      setLoadingUpdate(false);
       if (!response.success) {
         if (response.type === OLD_PASSWORD_ERR) {
           setErrorMessage('oldPassword', response.message);
@@ -85,7 +90,14 @@ export default function EditPasswordPage() {
         setOldPassword('');
         setNewPassword('');
         setConfirmNewPassword('');
+
+        notificationCtx.showNotification({
+          message: 'Update password successfully',
+          status: notificationCtx.status.SUCCESS,
+        });
       }
+    } else {
+      setLoadingUpdate(false);
     }
   };
 
@@ -122,7 +134,7 @@ export default function EditPasswordPage() {
           errorMessage={error.confirmNewPassword}
           onChange={(e) => setConfirmNewPassword(e.target.value)}
         />
-        <Button type="submit">Change Password</Button>
+        <Button type="submit" loading={loadingUpdate}>Change Password</Button>
       </form>
     </LayoutEdit>
   );

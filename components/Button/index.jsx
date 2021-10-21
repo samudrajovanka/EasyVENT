@@ -1,8 +1,10 @@
 import PropTypes from 'prop-types';
 import Link from 'next/link';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 export default function Button({
-  children, type, onClick, typeButton, href, full, target, disabled,
+  children, type, onClick, typeButton, href, full, target, disabled, loading,
 }) {
   let backgroundBtn = '';
   let textColor = 'text-ev-black';
@@ -38,9 +40,15 @@ export default function Button({
       type={type}
       onClick={onClick}
       className={`${backgroundBtn} ${textColor} ${disabledBtn} ${sizeBtn} h-10 px-8 rounded`}
-      disabled={disabled}
+      disabled={disabled || loading}
     >
-      {children}
+      {loading && (
+        <p>
+          <FontAwesomeIcon icon={faSpinner} className="animate-spin mr-2" />
+          Loading
+        </p>
+      )}
+      {!loading && children}
     </button>
   );
 }
@@ -52,6 +60,7 @@ Button.defaultProps = {
   full: false,
   target: '_self',
   disabled: false,
+  loading: false,
 };
 
 Button.propsTypes = {
@@ -62,4 +71,5 @@ Button.propsTypes = {
   full: PropTypes.bool,
   target: PropTypes.string,
   disabled: PropTypes.bool,
+  loading: PropTypes.bool,
 };

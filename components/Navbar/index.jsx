@@ -61,7 +61,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className={`sticky top-0 z-50 bg-white w-full py-3 border-b-2 border-ev-gray px-4 md:px-12 lg:px-24 xl:px-48 2xl:px-56 flex ${userCtx.user ? 'justify-between' : 'justify-start sm:justify-between'} items-center`}>
+    <nav className={`sticky top-0 z-40 bg-white w-full py-3 border-b-2 border-ev-gray px-4 md:px-12 lg:px-24 xl:px-48 2xl:px-56 flex ${userCtx.user ? 'justify-between' : 'justify-start sm:justify-between'} items-center`}>
       <Link href="/">
         <a>
           <EasyventIcon />

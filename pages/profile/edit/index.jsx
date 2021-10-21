@@ -3,6 +3,7 @@ import Button from '@components/Button';
 import LabelInput from '@components/LabelInput';
 import LayoutEdit from '@components/LayoutEdit';
 import { NAME_ALPHANUMERIC_ERR_MSG, USERNAME_REGEX_ERR_MSG } from '@constants/errorMessage';
+import NotificationContext from '@context/notificationContext';
 import UserContext from '@context/userContext';
 import { fetchApi } from '@lib/fetchingData';
 import { isAlphanumericWithSpace, isEmail, isUsername } from '@lib/typeChecking';
@@ -17,12 +18,14 @@ import {
 
 export default function EditPage({ user }) {
   const userCtx = useContext(UserContext);
+  const notificationCtx = useContext(NotificationContext);
   const [name, setName] = useState(user.name);
   const [username, setUsername] = useState(user.username);
   const [email, setEmail] = useState(user.email);
   const [avatar, setAvatar] = useState(user.avatar);
   const inputAvatarRef = useRef(null);
   const [disbledBtn, setDisbledBtn] = useState(true);
+  const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [error, setError] = useState({
     name: '',
     username: '',
@@ -98,10 +101,8 @@ export default function EditPage({ user }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setLoadingUpdate(true);
     const isValid = validateForm();
-
-    console.log('Clicked submit');
 
     if (isValid) {
       let avatarBody = null;
@@ -123,11 +124,20 @@ export default function EditPage({ user }) {
         isRemoveAvatar,
       });
 
+      setLoadingUpdate(false);
       if (response.success) {
-        console.log('Success');
+        notificationCtx.showNotification({
+          message: 'Profile updated successfully',
+          status: notificationCtx.status.SUCCESS,
+        });
       } else {
-        console.log('Error');
+        notificationCtx.showNotification({
+          message: 'Profile updated unsuccessfully',
+          status: notificationCtx.status.DANGER,
+        });
       }
+    } else {
+      setLoadingUpdate(false);
     }
   };
 
@@ -225,7 +235,7 @@ export default function EditPage({ user }) {
           errorMessage={error.username}
           onChange={(e) => setUsername(e.target.value)}
         />
-        <Button type="submit" disabled={disbledBtn}>Update Profile</Button>
+        <Button type="submit" disabled={disbledBtn} loading={loadingUpdate}>Update Profile</Button>
       </form>
     </LayoutEdit>
   );
