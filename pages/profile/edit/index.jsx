@@ -3,13 +3,20 @@ import Button from '@components/Button';
 import LabelInput from '@components/LabelInput';
 import LayoutEdit from '@components/LayoutEdit';
 import { NAME_ALPHANUMERIC_ERR_MSG, USERNAME_REGEX_ERR_MSG } from '@constants/errorMessage';
+import UserContext from '@context/userContext';
 import { fetchApi } from '@lib/fetchingData';
 import { isAlphanumericWithSpace, isEmail, isUsername } from '@lib/typeChecking';
 import { getSession } from 'next-auth/client';
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import {
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 export default function EditPage({ user }) {
+  const userCtx = useContext(UserContext);
   const [name, setName] = useState(user.name);
   const [username, setUsername] = useState(user.username);
   const [email, setEmail] = useState(user.email);
@@ -30,13 +37,19 @@ export default function EditPage({ user }) {
   };
 
   useEffect(() => {
-    if (name !== user.name || username !== user.username
-      || email !== user.email || avatar !== user.avatar) {
+    if (name !== userCtx.user?.name || username !== userCtx.user?.username
+      || email !== userCtx.user?.email || avatar !== userCtx.user?.avatar) {
       setDisbledBtn(false);
     } else {
       setDisbledBtn(true);
     }
-  }, [avatar, name, username, email]);
+  }, [avatar, name, username, email, userCtx.user]);
+
+  useEffect(() => {
+    if (userCtx.user?.avatar) {
+      setAvatar(userCtx.user?.avatar);
+    }
+  }, [userCtx.user?.avatar]);
 
   const validateForm = () => {
     let isValid = true;
@@ -102,17 +115,12 @@ export default function EditPage({ user }) {
         avatarBody = undefined;
       }
 
-      const response = await fetchApi(`/users/${user.username}?remove-avatar=${isRemoveAvatar}`, {
-        method: 'PUT',
-        headers: {
-          'content-type': undefined,
-        },
-        body: {
-          name,
-          username,
-          email,
-          avatar: avatarBody,
-        },
+      const response = await userCtx.updateProfile({
+        name,
+        username,
+        email,
+        avatarBody,
+        isRemoveAvatar,
       });
 
       if (response.success) {
@@ -176,7 +184,7 @@ export default function EditPage({ user }) {
               <>
                 <button className="text-ev-red" onClick={handleRemoveAvatar}>Remove avatar</button>
 
-                {avatar !== user.avatar && (
+                {userCtx.user && avatar !== userCtx.user?.avatar && (
                   <button className="text-yellow-400" onClick={handleCancelAvatar}>Cancel</button>
                 )}
               </>

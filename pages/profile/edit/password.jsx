@@ -2,12 +2,13 @@ import Button from '@components/Button';
 import LabelInput from '@components/LabelInput';
 import LayoutEdit from '@components/LayoutEdit';
 import { getSession } from 'next-auth/client';
-import { useState } from 'react';
-import { fetchApi } from '@lib/fetchingData';
+import { useContext, useState } from 'react';
 import { OLD_PASSWORD_ERR } from '@constants/errorType';
 import { CONFIRM_PASSWORD_ERR_MSG } from '@constants/errorMessage';
+import UserContext from '@context/userContext';
 
-export default function EditPasswordPage({ session }) {
+export default function EditPasswordPage() {
+  const userCtx = useContext(UserContext);
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
@@ -66,13 +67,10 @@ export default function EditPasswordPage({ session }) {
     const isValid = validateFormm();
 
     if (isValid) {
-      const response = await fetchApi(`/users/${session.user.name}/password`, {
-        method: 'PUT',
-        body: {
-          oldPassword,
-          newPassword,
-          confirmNewPassword,
-        },
+      const response = await userCtx.updatePassword({
+        oldPassword,
+        newPassword,
+        confirmNewPassword,
       });
 
       if (!response.success) {
