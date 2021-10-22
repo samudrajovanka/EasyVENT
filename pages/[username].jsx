@@ -9,13 +9,16 @@ import { useContext, useEffect, useState } from 'react';
 import { fetchApi } from '@lib/fetchingData';
 import { getSession } from 'next-auth/client';
 import UserContext from '@context/userContext';
+import NotificationContext from '@context/notificationContext';
 
 export default function ProfileUserPage({ sessionProps, userProps }) {
   const userCtx = useContext(UserContext);
+  const notificationCtx = useContext(NotificationContext);
   const [pageActive, setPageActive] = useState(1);
   const router = useRouter();
   const { username } = router.query;
   const [user, setUser] = useState(userProps);
+  const [loadingFollow, setLoadingFollow] = useState(false);
   const [isFollow, setIsFollow] = useState(user.followers.list
     .some((follower) => follower === sessionProps?.user.name));
   const [events, setEvents] = useState([]);
@@ -49,8 +52,10 @@ export default function ProfileUserPage({ sessionProps, userProps }) {
   };
 
   const handleFollow = async () => {
+    setLoadingFollow(true);
     const response = await userCtx.followUser(username);
 
+    setLoadingFollow(false);
     if (response.success) {
       setUser((currentUser) => ({
         ...currentUser,
@@ -61,13 +66,18 @@ export default function ProfileUserPage({ sessionProps, userProps }) {
       }));
       setIsFollow(true);
     } else {
-      console.log(response.message);
+      notificationCtx.showNotification({
+        message: response.message,
+        status: notificationCtx.status.DANGER,
+      });
     }
   };
 
   const handleUnfollow = async () => {
+    setLoadingFollow(true);
     const response = await userCtx.unfollowUser(username);
 
+    setLoadingFollow(false);
     if (response.success) {
       setUser((currentUser) => ({
         ...currentUser,
@@ -78,7 +88,18 @@ export default function ProfileUserPage({ sessionProps, userProps }) {
       }));
       setIsFollow(false);
     } else {
-      console.log(response.message);
+      notificationCtx.showNotification({
+        message: response.message,
+        status: notificationCtx.status.DANGER,
+      });
+    }
+  };
+
+  const toggleFollowAndUnfollow = () => {
+    if (isFollow) {
+      handleUnfollow();
+    } else {
+      handleFollow();
     }
   };
 
@@ -108,11 +129,15 @@ export default function ProfileUserPage({ sessionProps, userProps }) {
                 {user.username === userCtx.user?.username && (
                   <Button typeButton="secondary" href="/profile/edit">Edit Profile</Button>
                 )}
-                {user.username !== userCtx.user?.username && isFollow && (
-                  <Button typeButton="secondary" onClick={handleUnfollow} full>Unfollow</Button>
-                )}
-                {user.username !== userCtx.user?.username && !isFollow && (
-                  <Button onClick={handleFollow} full>Follow</Button>
+                {user.username !== userCtx.user?.username && (
+                  <Button
+                    typeButton={isFollow ? 'secondary' : 'primary'}
+                    onClick={toggleFollowAndUnfollow}
+                    loading={loadingFollow}
+                    full
+                  >
+                    {isFollow ? 'Unfollow' : 'Follow'}
+                  </Button>
                 )}
               </>
             )}
@@ -123,7 +148,7 @@ export default function ProfileUserPage({ sessionProps, userProps }) {
           </div>
         </div>
 
-        <p className="col-span-2 col-span-3 md:col-span-8 lg:col-span-9 md:text-xl text-ev-dark-gray order-4 sm:order-none sm:col-span-2">{user.username}</p>
+        <p className="col-span-3 md:col-span-8 lg:col-span-9 md:text-xl text-ev-dark-gray order-4 sm:order-none sm:col-span-2">{user.username}</p>
 
         <div className="col-span-2 row-span-2 sm:row-span-1 self-center md:self-start md:col-span-8 lg:col-span-9 order-2 sm:order-none">
           <div className="flex sm:gap-10 justify-between sm:justify-start">

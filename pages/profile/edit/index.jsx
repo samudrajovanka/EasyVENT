@@ -5,6 +5,8 @@ import LayoutEdit from '@components/LayoutEdit';
 import { NAME_ALPHANUMERIC_ERR_MSG, USERNAME_REGEX_ERR_MSG } from '@constants/errorMessage';
 import NotificationContext from '@context/notificationContext';
 import UserContext from '@context/userContext';
+import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { fetchApi } from '@lib/fetchingData';
 import { isAlphanumericWithSpace, isEmail, isUsername } from '@lib/typeChecking';
 import { getSession } from 'next-auth/client';
@@ -23,6 +25,8 @@ export default function EditPage({ user }) {
   const [username, setUsername] = useState(user.username);
   const [email, setEmail] = useState(user.email);
   const [avatar, setAvatar] = useState(user.avatar);
+  const [disabledBtnEmail, setDisabledBtnEmail] = useState(user.isVerifiedEmail);
+  const [isVerifiedEmail, setIsVerifiedEmail] = useState(user.isVerifiedEmail);
   const inputAvatarRef = useRef(null);
   const [disbledBtn, setDisbledBtn] = useState(true);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
@@ -45,6 +49,12 @@ export default function EditPage({ user }) {
       setDisbledBtn(false);
     } else {
       setDisbledBtn(true);
+    }
+
+    if (email !== userCtx.user?.email) {
+      setDisabledBtnEmail(false);
+    } else {
+      setDisabledBtnEmail(true);
     }
   }, [avatar, name, username, email, userCtx.user]);
 
@@ -99,6 +109,21 @@ export default function EditPage({ user }) {
     return isValid;
   };
 
+  const handleChangeEmail = (e) => {
+    setEmail(e.target.value);
+
+    // if (e.target.value === '') {
+    //   set
+    //   isValid = false;
+    // } else if (!isEmail(e.target.value)) {
+    //   setErrorMessage('email', 'Email is invalid');
+    //   isValid = false;
+    // } else {
+    //   setErrorMessage('email', '');
+    //   isValid = isValid && true;
+    // }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoadingUpdate(true);
@@ -125,6 +150,11 @@ export default function EditPage({ user }) {
       });
 
       setLoadingUpdate(false);
+
+      if (user.email !== email) {
+        setIsVerifiedEmail(false);
+      }
+
       if (response.success) {
         notificationCtx.showNotification({
           message: 'Profile updated successfully',
@@ -142,7 +172,22 @@ export default function EditPage({ user }) {
   };
 
   const handleConfirmEmail = async () => {
-    console.log('Verif email click');
+    setLoadingUpdate(true);
+    const response = await userCtx.updateEmail(email);
+
+    setLoadingUpdate(false);
+    if (response.success) {
+      setIsVerifiedEmail(false);
+      notificationCtx.showNotification({
+        message: 'Check your email for verification email',
+        status: notificationCtx.status.SUCCESS,
+      });
+    } else {
+      notificationCtx.showNotification({
+        message: response.message,
+        status: notificationCtx.status.DANGER,
+      });
+    }
   };
 
   const handleChangeAvatar = () => {
@@ -157,7 +202,7 @@ export default function EditPage({ user }) {
   };
 
   const handleRemoveAvatar = () => {
-    setAvatar(`https://avatars.dicebear.com/api/jdenticon/${user.username}.svg`);
+    setAvatar(`https://avatars.dicebear.com/api/jdenticon/${+user.createdAt}.svg`);
     inputAvatarRef.current.value = '';
   };
 
@@ -220,10 +265,31 @@ export default function EditPage({ user }) {
             placeholder="Your email"
             value={email}
             errorMessage={error.email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => handleChangeEmail(e)}
           />
-          <div>
-            <Button typeButton="secondary" onClick={handleConfirmEmail}>Confirm Email</Button>
+          <div className="flex items-center gap-3">
+            <Button
+              typeButton="secondary"
+              onClick={handleConfirmEmail}
+              disabled={disabledBtnEmail && isVerifiedEmail}
+              loading={loadingUpdate}
+            >
+              Confirm Email
+            </Button>
+
+            {isVerifiedEmail && (
+              <p className="text-green-500">
+                <FontAwesomeIcon icon={faCheck} className="mr-2" />
+                Verified
+              </p>
+            )}
+
+            {!isVerifiedEmail && (
+              <p className="text-ev-red">
+                <FontAwesomeIcon icon={faTimes} className="mr-2" />
+                Not Verified
+              </p>
+            )}
           </div>
         </div>
         <LabelInput

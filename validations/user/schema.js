@@ -30,10 +30,15 @@ const UserUpdatePasswordPayloadSchema = Joi.object({
   confirmNewPassword: Joi.string().required(),
 });
 
+const UserUpdateEmailPayloadSchema = Joi.object({
+  email: Joi.string().email().required(),
+});
+
 export {
   UserRegisterPayloadSchema,
   UserLoginPayloadSchema,
   UserFollowPayloadSchema,
   UserUpdateProfilePayloadSchema,
   UserUpdatePasswordPayloadSchema,
+  UserUpdateEmailPayloadSchema,
 };

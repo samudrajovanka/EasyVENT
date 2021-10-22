@@ -9,14 +9,14 @@ export default function Button({
   let backgroundBtn = '';
   let textColor = 'text-ev-black';
   if (typeButton === 'primary') {
-    backgroundBtn = `bg-ev-blue ${disabled ? '' : 'hover:bg-blue-700'}`;
+    backgroundBtn = `bg-ev-blue ${disabled || loading ? '' : 'hover:bg-blue-700'}`;
     textColor = 'text-white';
   } else if (typeButton === 'secondary') {
-    backgroundBtn = `bg-ev-gray ${disabled ? '' : 'hover:bg-gray-300'}`;
+    backgroundBtn = `bg-ev-gray ${disabled || loading ? '' : 'hover:bg-gray-300'}`;
   }
 
   let disabledBtn = '';
-  if (disabled) {
+  if (disabled || loading) {
     disabledBtn = 'cursor-not-allowed';
   }
 

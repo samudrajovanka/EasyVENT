@@ -18,3 +18,4 @@ export const USER_ACTIVE_ERR_MSG = 'User already active';
 export const FILE_TYPE_ERR_MSG = 'File type is not allowed';
 export const NO_FILE_ERR_MSG = 'No file accepted';
 export const OLD_PASSWORD_ERR_MSG = 'Old password incorrect';
+export const TYPE_VERIFICATION_ERR_MSG = 'Type verification not valid';

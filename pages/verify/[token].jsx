@@ -7,18 +7,23 @@ import { useEffect, useState } from 'react';
 
 export default function VerifyPage() {
   const router = useRouter();
-  const { token } = router.query;
+  const { token, type = 'register' } = router.query;
   const [isSuccessVerify, setIsSuccessVerify] = useState(true);
   const [unsuccessType, setUnsuccessType] = useState(null);
 
   useEffect(async () => {
     if (token) {
-      const response = await fetchApi(`/auth/verify/${token}`, {
+      const response = await fetchApi(`/auth/verify/${token}?type=${type}`, {
         method: 'POST',
       });
 
       if (response.success) {
-        router.replace('/auth/login');
+        setIsSuccessVerify(true);
+        if (type === 'register') {
+          router.replace('/auth/login');
+        } else if (type === 'update-email') {
+          router.replace('/');
+        }
       } else if (!response.success) {
         setIsSuccessVerify(false);
 
@@ -39,16 +44,34 @@ export default function VerifyPage() {
           <p className="text-xl text-center">Please wait</p>
         )}
 
-        {!isSuccessVerify && unsuccessType === TOKEN_INVALID_ERR && (
+        {!isSuccessVerify && (
           <>
-            <p className="text-xl text-center">Token expired or invalid</p>
-            <Button href="/register">Register Again</Button>
-          </>
-        )}
-        {!isSuccessVerify && unsuccessType === USER_ACTIVE_ERR && (
-          <>
-            <p className="text-xl text-center">Your account already active</p>
-            <Button href="/">Go Home</Button>
+            {type === 'register' && (
+              <>
+                {unsuccessType === TOKEN_INVALID_ERR && (
+                  <>
+                    <p className="text-xl text-center">Token expired or invalid</p>
+                    <Button href="/register">Register Again</Button>
+                  </>
+                )}
+                {unsuccessType === USER_ACTIVE_ERR && (
+                  <>
+                    <p className="text-xl text-center">Your account already active</p>
+                    <Button href="/">Go Home</Button>
+                  </>
+                )}
+              </>
+            )}
+            {type === 'update-email' && (
+              <>
+                {unsuccessType === TOKEN_INVALID_ERR && (
+                  <>
+                    <p className="text-xl text-center">Token expired or invalid</p>
+                    <Button href="/profile/edit">Update Again</Button>
+                  </>
+                )}
+              </>
+            )}
           </>
         )}
       </Card>

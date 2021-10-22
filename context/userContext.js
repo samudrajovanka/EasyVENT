@@ -8,6 +8,7 @@ const UserContext = createContext({
   setUserByUsername: (username) => {},
   updateProfile: ({ name, username, email, avatarBody, isRemoveAvatar }) => {},
   updatePassword: ({ oldPassword, newPassword, confirmNewPassword }) => {},
+  updateEmail: ({ email }) => {},
   removeUser: () => {},
   followUser: (username) => {},
   unfollowUser: (username) => {},
@@ -86,6 +87,25 @@ export const UserContextProvider = ({ children }) => {
     return response;
   };
 
+  const updateEmail = async (email) => {
+    const response = await fetchApi(`/users/${user?.username}/email`, {
+      method: 'PUT',
+      body: {
+        email,
+      }
+    });
+
+    if (response.success) {
+      setUser((currentUser) => ({
+        ...currentUser,
+        email,
+        isEmailVerified: false,
+      }));
+    }
+
+    return response;
+  }
+
   const followUser = async (username) => {
     const response = await fetchApi(`/users/${user.username}/follow`, {
       method: 'PUT',
@@ -133,6 +153,7 @@ export const UserContextProvider = ({ children }) => {
     setUserByUsername,
     updateProfile,
     updatePassword,
+    updateEmail,
     removeUser,
     followUser,
     unfollowUser,
