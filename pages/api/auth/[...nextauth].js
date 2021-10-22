@@ -1,14 +1,10 @@
 import AuthenticationError from '@exceptions/AuthenticationError';
-import NotFoundError from '@exceptions/NotFoundError';
 import connectDb from '@lib/connectDb';
 import NextAuth from 'next-auth';
 import Providers from 'next-auth/providers';
 import User from '@models/UserModel';
 import bcrypt from 'bcrypt';
-import {
-  LOGIN_FAILED_ERR_MSG,
-  USER_NOT_FOUND_ERR_MSG,
-} from '@constants/errorMessage';
+import { LOGIN_FAILED_ERR_MSG } from '@constants/errorMessage';
 import userValidation from '@validations/user';
 
 export default connectDb(NextAuth({
@@ -31,7 +27,7 @@ export default connectDb(NextAuth({
         const user = await User.findOne({ username: credentials.username.toLowerCase() });
 
         if (!user) {
-          throw new NotFoundError(USER_NOT_FOUND_ERR_MSG);
+          throw new AuthenticationError(LOGIN_FAILED_ERR_MSG);
         }
 
         const isMatch = await bcrypt.compare(credentials.password, user.password);

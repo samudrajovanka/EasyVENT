@@ -1,37 +1,33 @@
+import AuthenticationError from '@exceptions/AuthenticationError';
 import ClientError from '@exceptions/ClientError';
 import connectDb from '@lib/connectDb';
 import { clientErrRes, notAllowedErrRes, serverErrRes } from '@lib/errorResponse';
 import UserService from '@servicesDb/UserService';
+import userValidation from '@validations/user';
+import { getSession } from 'next-auth/client';
 
 async function handler(req, res) {
   const userService = new UserService();
 
   switch (req.method) {
-    case 'POST':
+    case 'PUT':
       try {
-        const { token, type = 'register' } = req.query;
+        const session = await getSession({ req });
 
-        const userId = await userService.verifyToken({ token, type });
-
-        let statusCode = 200;
-        switch (type) {
-          case 'register':
-            statusCode = 201;
-            break;
-          case 'update-email':
-            statusCode = 200;
-            break;
-          default:
-            statusCode = 200;
+        if (!session) {
+          throw new AuthenticationError('No authenticated');
         }
 
-        return res.status(statusCode).json({
+        const { email } = req.body;
+        const { username } = req.query;
+
+        userValidation.validateUserUpdateEmailPayload(req.body);
+
+        await userService.verifyEmail(username, { email });
+
+        return res.status(200).json({
           success: true,
-          message: 'Email verified successfully',
-          data: {
-            type,
-            id: userId,
-          },
+          message: 'Verification email success sent to mail. Please check',
         });
       } catch (error) {
         if (error instanceof ClientError) {

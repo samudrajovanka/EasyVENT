@@ -4,6 +4,7 @@ import {
   UserFollowPayloadSchema,
   UserLoginPayloadSchema,
   UserRegisterPayloadSchema,
+  UserUpdateEmailPayloadSchema,
   UserUpdatePasswordPayloadSchema,
   UserUpdateProfilePayloadSchema,
 } from './schema';
@@ -39,6 +40,13 @@ const userValidation = {
   },
   validateUserUpdatePasswordPayload: (payload) => {
     const validationResult = UserUpdatePasswordPayloadSchema.validate(payload);
+
+    if (validationResult.error) {
+      throw new InvariantError(validationResult.error.message, VALIDATION_ERR);
+    }
+  },
+  validateUserUpdateEmailPayload: (payload) => {
+    const validationResult = UserUpdateEmailPayloadSchema.validate(payload);
 
     if (validationResult.error) {
       throw new InvariantError(validationResult.error.message, VALIDATION_ERR);
