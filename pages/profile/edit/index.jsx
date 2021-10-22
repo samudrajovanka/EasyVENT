@@ -109,21 +109,6 @@ export default function EditPage({ user }) {
     return isValid;
   };
 
-  const handleChangeEmail = (e) => {
-    setEmail(e.target.value);
-
-    // if (e.target.value === '') {
-    //   set
-    //   isValid = false;
-    // } else if (!isEmail(e.target.value)) {
-    //   setErrorMessage('email', 'Email is invalid');
-    //   isValid = false;
-    // } else {
-    //   setErrorMessage('email', '');
-    //   isValid = isValid && true;
-    // }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoadingUpdate(true);
@@ -265,7 +250,7 @@ export default function EditPage({ user }) {
             placeholder="Your email"
             value={email}
             errorMessage={error.email}
-            onChange={(e) => handleChangeEmail(e)}
+            onChange={(e) => setEmail(e.target.value)}
           />
           <div className="flex items-center gap-3">
             <Button
