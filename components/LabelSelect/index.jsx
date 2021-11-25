@@ -1,8 +1,8 @@
-import Input from '@components/Input';
+import Select from '@components/Select';
 import PropTypes from 'prop-types';
 
-export default function LabelInput({
-  type, id, label, required, placeholder, value, onChange, errorMessage, large,
+export default function LabelSelect({
+  id, label, options, required, placeholder, onChange, errorMessage, value,
 }) {
   return (
     <div className="flex flex-col gap-1">
@@ -10,35 +10,29 @@ export default function LabelInput({
         {label}
         {required && <span className="text-ev-red">*</span>}
       </label>
-      <Input
-        type={type}
+      <Select
         id={id}
         required={required}
         placeholder={placeholder}
         value={value}
+        options={options}
         onChange={onChange}
-        large={large}
       />
       {errorMessage && <p className="text-ev-red text-sm">{errorMessage}</p>}
     </div>
   );
 }
 
-LabelInput.defaultProps = {
-  type: 'text',
+LabelSelect.defaultProps = {
   required: false,
   errorMessage: '',
-  large: false,
 };
 
-LabelInput.propTypes = {
-  type: PropTypes.string,
+LabelSelect.propTypes = {
   id: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
   required: PropTypes.bool,
   placeholder: PropTypes.string.isRequired,
-  value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   errorMessage: PropTypes.string,
-  large: PropTypes.bool,
 };
