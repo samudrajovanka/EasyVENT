@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-export default function CreatePage() {
-  return (
-    <h1>Create Page</h1>
-  );
-}
-=======
 /* eslint-disable  */
 import Title from '@components/Title';
 import { faImage } from '@fortawesome/free-regular-svg-icons';
@@ -357,4 +350,3 @@ export async function getServerSideProps(context) {
     },
   };
 }
->>>>>>> develop

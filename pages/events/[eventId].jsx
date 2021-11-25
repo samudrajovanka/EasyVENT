@@ -2,10 +2,6 @@ import Badge from '@components/Badge';
 import Title from '@components/Title';
 import { faAddressCard, faCalendarAlt, faMoneyBillAlt } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-<<<<<<< HEAD
-import fetchData from '@lib/fetchData';
-=======
->>>>>>> develop
 import Image from 'next/dist/client/image';
 import { useRouter } from 'next/dist/client/router';
 import { useEffect, useState } from 'react';
@@ -17,10 +13,7 @@ import {
 import Link from 'next/link';
 import Button from '@components/Button';
 import uuid from 'react-uuid';
-<<<<<<< HEAD
-=======
 import { fetchApi } from '@lib/fetchingData';
->>>>>>> develop
 
 export default function DetailEventPage() {
   const router = useRouter();
@@ -28,13 +21,6 @@ export default function DetailEventPage() {
   const [loading, setLoading] = useState(true);
   const [event, setEvent] = useState({});
 
-<<<<<<< HEAD
-  useEffect(() => {
-    if (!eventId) {
-      return;
-    }
-    setEvent(fetchData.getEventById(eventId));
-=======
   useEffect(async () => {
     if (!eventId) {
       return;
@@ -45,7 +31,6 @@ export default function DetailEventPage() {
     const { event: eventResponse } = response.data;
 
     setEvent(eventResponse);
->>>>>>> develop
     setLoading(false);
   }, [eventId]);
 
@@ -56,16 +41,10 @@ export default function DetailEventPage() {
           <div className="lg:col-span-8">
             <div className="relative w-full img-banner-ratio">
               <Image
-<<<<<<< HEAD
-                src={event?.banner}
-                layout="fill"
-                loading="lazy"
-=======
                 src={event?.banner.url ?? '/images/blank.png'}
                 layout="fill"
                 loading="lazy"
                 objectFit="cover"
->>>>>>> develop
                 alt="banner_event"
               />
             </div>
@@ -73,11 +52,7 @@ export default function DetailEventPage() {
               <header className="flex flex-col gap-2">
                 <h1 className="text-2xl">{event?.eventName}</h1>
                 <div className="flex">
-<<<<<<< HEAD
-                  <Badge>{event?.eventType}</Badge>
-=======
                   <Badge>{event?.type}</Badge>
->>>>>>> develop
                 </div>
               </header>
               <p>{event?.caption}</p>
@@ -101,13 +76,8 @@ export default function DetailEventPage() {
                   <FontAwesomeIcon icon={faCalendarAlt} size="lg" />
                   <p className="font-bold text-xl">Start Date</p>
                 </div>
-<<<<<<< HEAD
-                <p>{moment(event?.startDateTime).format('dddd, DD MMMM YYYY')}</p>
-                <p>{moment(event?.startDateTime).format('HH:mm')}</p>
-=======
                 <p>{moment(event?.start_time).format('dddd, DD MMMM YYYY')}</p>
                 <p>{moment(event?.start_time).format('HH:mm')}</p>
->>>>>>> develop
               </div>
 
               {/* enddate */}
@@ -116,13 +86,8 @@ export default function DetailEventPage() {
                   <FontAwesomeIcon icon={faMoneyBillAlt} size="lg" />
                   <p className="font-bold text-xl">End Date</p>
                 </div>
-<<<<<<< HEAD
-                <p>{moment(event?.endDateTime).format('dddd, DD MMMM YYYY')}</p>
-                <p>{moment(event?.endDateTime).format('HH:mm')}</p>
-=======
                 <p>{moment(event?.end_time).format('dddd, DD MMMM YYYY')}</p>
                 <p>{moment(event?.end_time).format('HH:mm')}</p>
->>>>>>> develop
               </div>
 
               {/* contactperson */}
@@ -131,11 +96,7 @@ export default function DetailEventPage() {
                   <FontAwesomeIcon icon={faAddressCard} size="lg" />
                   <p className="font-bold text-xl">Contact Person</p>
                 </div>
-<<<<<<< HEAD
-                {event?.contactPersons.map((contactperson) => {
-=======
                 {event?.contact_persons.map((contactperson) => {
->>>>>>> develop
                   if (contactperson.app === 'whatsapp') {
                     return (
                       <Link href={`https://wa.me/${contactperson.value}`} key={uuid()}>
@@ -183,11 +144,7 @@ export default function DetailEventPage() {
                   return null;
                 })}
               </div>
-<<<<<<< HEAD
-              <Button href={event?.registrationLink} target="_blank">Register Now</Button>
-=======
               <Button href={event?.link} target="_blank">Register Now</Button>
->>>>>>> develop
             </div>
           </div>
         </>
