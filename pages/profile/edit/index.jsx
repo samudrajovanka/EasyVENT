@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/label-has-associated-control */
 import Button from '@components/Button';
 import LabelInput from '@components/LabelInput';
 import LayoutEdit from '@components/LayoutEdit';

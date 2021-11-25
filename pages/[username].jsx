@@ -2,7 +2,6 @@ import Button from '@components/Button';
 import EventList from '@components/EventList';
 import Pagination from '@components/Pagination';
 import Title from '@components/Title';
-import fetchData from '@lib/fetchData';
 import { useRouter } from 'next/dist/client/router';
 import Image from 'next/image';
 import { useContext, useEffect, useState } from 'react';
@@ -10,8 +9,9 @@ import { fetchApi } from '@lib/fetchingData';
 import { getSession } from 'next-auth/client';
 import UserContext from '@context/userContext';
 import NotificationContext from '@context/notificationContext';
+import sliceEvents from '@lib/sliceEvent';
 
-export default function ProfileUserPage({ sessionProps, userProps }) {
+export default function ProfileUserPage({ sessionProps, userProps, eventsProps }) {
   const userCtx = useContext(UserContext);
   const notificationCtx = useContext(NotificationContext);
   const [pageActive, setPageActive] = useState(1);
@@ -21,15 +21,11 @@ export default function ProfileUserPage({ sessionProps, userProps }) {
   const [loadingFollow, setLoadingFollow] = useState(false);
   const [isFollow, setIsFollow] = useState(user.followers.list
     .some((follower) => follower === sessionProps?.user.name));
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState(sliceEvents(pageActive, eventsProps));
 
   useEffect(() => {
-    if (!username) {
-      return;
-    }
-
-    setEvents(fetchData.getEventsByUsername(username, pageActive));
-  }, [username]);
+    setEvents(sliceEvents(pageActive, eventsProps));
+  }, [pageActive]);
 
   useEffect(() => {
     setUser(userProps);
@@ -171,7 +167,7 @@ export default function ProfileUserPage({ sessionProps, userProps }) {
       <div className="w-full h-0.5 bg-ev-gray my-10" />
 
       <div>
-        {events.length > 0 && (
+        {events?.data?.events?.length > 0 && (
           <>
             {events.maxPage > 1 && (
               <div className="flex justify-center mb-10">
@@ -220,12 +216,16 @@ export async function getServerSideProps(context) {
     };
   }
 
+  const eventResponse = await fetchApi(`/events?username=${userResponse.data.user.username}`);
+  console.log(eventResponse);
+
   const session = await getSession({ req: context.req });
 
   return {
     props: {
       userProps: userResponse.data.user,
       sessionProps: session,
+      eventsProps: eventResponse.data.events,
     },
   };
 }

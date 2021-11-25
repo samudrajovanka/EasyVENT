@@ -1,11 +1,17 @@
 import EventList from '@components/EventList';
 import Pagination from '@components/Pagination';
-import fetchData from '@lib/fetchData';
-import { useState } from 'react';
+import { fetchApi } from '@lib/fetchingData';
+import sliceEvents from '@lib/sliceEvent';
+import { useEffect, useState } from 'react';
 
-export default function HomePage() {
+export default function HomePage({ events }) {
   const [pageActive, setPageActive] = useState(1);
-  const events = fetchData.getEvents(pageActive);
+
+  const [eventsSlice, setEventsSlice] = useState(sliceEvents(pageActive, events));
+
+  useEffect(() => {
+    setEventsSlice(sliceEvents(pageActive, events));
+  }, [pageActive]);
 
   const handleLeftClick = () => {
     if (pageActive > 1) {
@@ -25,23 +31,23 @@ export default function HomePage() {
 
   return (
     <>
-      {events.maxPage > 1 && (
+      {eventsSlice.maxPage > 1 && (
         <div className="flex justify-center mb-10">
           <Pagination
             pageActive={pageActive}
-            endPage={events.maxPage}
+            endPage={eventsSlice.maxPage}
             leftClick={handleLeftClick}
             rightClick={handleRightClick}
             pageClick={handlePageClick}
           />
         </div>
       )}
-      <EventList events={events?.data?.events ?? []} />
-      {events.maxPage > 1 && (
+      <EventList events={eventsSlice.data.events ?? []} />
+      {eventsSlice.maxPage > 1 && (
         <div className="flex justify-center mt-10">
           <Pagination
             pageActive={pageActive}
-            endPage={events.maxPage}
+            endPage={eventsSlice.maxPage}
             leftClick={handleLeftClick}
             rightClick={handleRightClick}
             pageClick={handlePageClick}
@@ -50,4 +56,16 @@ export default function HomePage() {
       )}
     </>
   );
+}
+
+export async function getServerSideProps() {
+  const response = await fetchApi('/events');
+
+  const { events } = response.data;
+
+  return {
+    props: {
+      events,
+    },
+  };
 }
