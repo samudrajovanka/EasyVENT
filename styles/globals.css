@@ -38,3 +38,25 @@ body {
 .img-square-ratio {
   aspect-ratio: 1/1;
 }
+
+.min-height {
+  min-height: auto;
+}
+
+@media only screen and (min-width: 640px) {
+  .min-height {
+    min-height: 60vh;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .min-height {
+    min-height: 55vh;
+  }
+}
+
+@media only screen and (min-width: 1536px) {
+  .min-height {
+    min-height: 65vh;
+  }
+}

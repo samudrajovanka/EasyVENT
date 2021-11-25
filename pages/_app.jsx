@@ -3,16 +3,25 @@ import '../styles/globals.css';
 import 'tailwindcss/tailwind.css';
 import Head from 'next/head';
 import Layout from '@components/Layout';
+import { Provider as AuthProvider } from 'next-auth/client';
+import { UserContextProvider } from '@context/userContext';
+import { NotificationContextProvider } from '@context/notificationContext';
 
 function MyApp({ Component, pageProps }) {
   return (
-    <Layout>
-      <Head>
-        <title>EasyVENT</title>
-      </Head>
+    <AuthProvider session={pageProps.session}>
+      <UserContextProvider>
+        <NotificationContextProvider>
+          <Layout>
+            <Head>
+              <title>EasyVENT</title>
+            </Head>
 
-      <Component {...pageProps} />
-    </Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </NotificationContextProvider>
+      </UserContextProvider>
+    </AuthProvider>
   );
 }
 

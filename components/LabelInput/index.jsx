@@ -2,7 +2,7 @@ import Input from '@components/Input';
 import PropTypes from 'prop-types';
 
 export default function LabelInput({
-  type, id, label, required, placeholder, value, onChange, errorMessage,
+  type, id, label, required, placeholder, value, onChange, errorMessage, large,
 }) {
   return (
     <div className="flex flex-col gap-1">
@@ -17,6 +17,7 @@ export default function LabelInput({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        large={large}
       />
       {errorMessage && <p className="text-ev-red text-sm">{errorMessage}</p>}
     </div>
@@ -27,6 +28,7 @@ LabelInput.defaultProps = {
   type: 'text',
   required: false,
   errorMessage: '',
+  large: false,
 };
 
 LabelInput.propTypes = {
@@ -38,4 +40,5 @@ LabelInput.propTypes = {
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   errorMessage: PropTypes.string,
+  large: PropTypes.bool,
 };

@@ -4,7 +4,7 @@ export default function Card({
   children, width, padding, direction, gap,
 }) {
   return (
-    <div className={`border border-ev-gray shadow-xl rounded flex ${width} ${padding} ${direction} ${gap}`}>
+    <div className={`border border-ev-gray shadow-lg rounded flex ${width} ${padding} ${direction} ${gap}`}>
       {children}
     </div>
   );

@@ -3,7 +3,14 @@
     "baseUrl": "./",
     "paths": {
       "@components/*": ["components/*"],
-      "@lib/*": ["lib/*"]
+      "@lib/*": ["lib/*"],
+      "@models/*": ["models/*"],
+      "@servicesDb/*": ["services/database/*"],
+      "@servicesStorage/*": ["services/storage/*"],
+      "@exceptions/*": ["exceptions/*"],
+      "@validations/*": ["validations/*"],
+      "@constants/*": ["constants/*"],
+      "@context/*": ["context/*"]
     }
   }
 }

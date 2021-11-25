@@ -3,24 +3,14 @@ import {
   faHome, faPlusSquare, faSearch, faSignInAlt, faUserPlus,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Cookies from 'js-cookie';
 import { useRouter } from 'next/dist/client/router';
-import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import { useContext } from 'react';
+import UserContext from '@context/userContext';
 
 export default function BottomNavigation() {
-  const [login, setLogin] = useState(false);
-  const [avatar, setAvatar] = useState('/images/avatar/default-avatar.jpg');
-  const [username, setUsername] = useState(Cookies.get('username'));
-  const [loading, setLoading] = useState(true);
+  const userCtx = useContext(UserContext);
   const router = useRouter();
-
-  useEffect(() => {
-    setLogin(Boolean(Cookies.get('login')));
-    setAvatar(Cookies.get('avatar'));
-    setUsername(Cookies.get('username'));
-    setLoading(false);
-  }, [Cookies.get('login')]);
 
   return (
     <nav className="flex justify-between gap-5 items-center px-10 py-4 fixed bottom-0 w-screen bg-white border-t-2 border-ev-gray shadow-xl sm:hidden">
@@ -32,18 +22,19 @@ export default function BottomNavigation() {
         <FontAwesomeIcon icon={faSearch} size="lg" />
       </NavLink>
 
-      {!loading && login && (
+      {!userCtx.isLoading && userCtx.isAuthenticated && (
         <>
           <NavLink href="/create" active={router.pathname === '/create'}>
             <FontAwesomeIcon icon={faPlusSquare} size="lg" />
           </NavLink>
 
-          <NavLink href={`/${username}`}>
+          <NavLink href={`/${userCtx.user.username}`}>
             <div className="relative w-6 img-square-ratio rounded-full overflow-hidden">
               <Image
-                src={avatar}
+                src={userCtx.user.avatar}
                 layout="fill"
                 loading="lazy"
+                objectFit="cover"
                 alt="profile_avatar"
               />
             </div>
@@ -51,13 +42,13 @@ export default function BottomNavigation() {
         </>
       )}
 
-      {!login && (
+      {!userCtx.isLoading && !userCtx.isAuthenticated && (
         <>
-          <NavLink href="/login" active={router.pathname === '/login'}>
+          <NavLink href="/auth/login" active={router.pathname === '/auth/login'}>
             <FontAwesomeIcon icon={faSignInAlt} size="lg" />
           </NavLink>
 
-          <NavLink href="/register" active={router.pathname === '/register'}>
+          <NavLink href="/auth/register" active={router.pathname === '/auth/register'}>
             <FontAwesomeIcon icon={faUserPlus} size="lg" />
           </NavLink>
         </>

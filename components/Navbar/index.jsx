@@ -2,31 +2,27 @@ import Button from '@components/Button';
 import EasyventIcon from '@components/Icons/EasyventIcon';
 import { faHome, faSearch, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Cookies from 'js-cookie';
 import Link from 'next/link';
 import Image from 'next/image';
 import { faPlusSquare } from '@fortawesome/free-regular-svg-icons';
 import Dropdown from '@components/Dropdown';
 import DropdownItem from '@components/DropdownItem';
-import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/dist/client/router';
+import {
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import NavLink from '@components/NavLink';
+import { signOut } from 'next-auth/client';
+import { useRouter } from 'next/dist/client/router';
+import UserContext from '@context/userContext';
 
 export default function Navbar() {
-  const [login, setLogin] = useState(false);
-  const [avatar, setAvatar] = useState('/images/avatar/default-avatar.jpg');
-  const [username, setUsername] = useState(Cookies.get('username'));
-  const [loading, setLoading] = useState(true);
   const [isOpenDropdown, setIsOpenDropdown] = useState(false);
-  const router = useRouter();
   const dropdown = useRef(null);
-
-  useEffect(() => {
-    setLogin(Boolean(Cookies.get('login')));
-    setAvatar(Cookies.get('avatar'));
-    setUsername(Cookies.get('username'));
-    setLoading(false);
-  }, [Cookies.get('login')]);
+  const router = useRouter();
+  const userCtx = useContext(UserContext);
 
   useEffect(() => {
     if (!isOpenDropdown) return;
@@ -49,16 +45,23 @@ export default function Navbar() {
     setIsOpenDropdown((current) => !current);
   };
 
-  const handleLogout = () => {
-    Cookies.remove('login');
-    Cookies.remove('avatar');
-    Cookies.remove('username');
+  const handleLogout = async () => {
+    if (router.pathname !== '/') {
+      await signOut({ callbackUrl: '/' });
+      await userCtx.removeUser();
+    } else {
+      await signOut({ redirect: false });
+      await userCtx.removeUser();
+    }
+  };
+
+  const handleLogoutDropdown = async () => {
     toggleDropdown();
-    router.replace('/');
+    await handleLogout();
   };
 
   return (
-    <nav className={`sticky top-0 z-50 bg-white w-full py-3 border-b-2 border-ev-gray px-4 md:px-12 lg:px-24 xl:px-48 2xl:px-56 flex ${login ? 'justify-between' : 'justify-start sm:justify-between'} items-center`}>
+    <nav className={`sticky top-0 z-40 bg-white w-full py-3 border-b-2 border-ev-gray px-4 md:px-12 lg:px-24 xl:px-48 2xl:px-56 flex ${userCtx.user ? 'justify-between' : 'justify-start sm:justify-between'} items-center`}>
       <Link href="/">
         <a>
           <EasyventIcon />
@@ -74,7 +77,7 @@ export default function Navbar() {
           <FontAwesomeIcon icon={faSearch} />
         </NavLink>
 
-        {login && !loading && (
+        {!userCtx.isLoading && userCtx.isAuthenticated && (
           <>
             <NavLink href="/create" active>
               <FontAwesomeIcon icon={faPlusSquare} />
@@ -86,9 +89,10 @@ export default function Navbar() {
                 onClick={toggleDropdown}
               >
                 <Image
-                  src={avatar}
+                  src={userCtx.user.avatar}
                   layout="fill"
                   loading="lazy"
+                  objectFit="cover"
                   alt="profile_avatar"
                 />
               </button>
@@ -96,8 +100,8 @@ export default function Navbar() {
               {isOpenDropdown && (
                 <div ref={dropdown}>
                   <Dropdown>
-                    <DropdownItem href={`/${username}`} onClick={toggleDropdown}>Profile</DropdownItem>
-                    <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
+                    <DropdownItem href={`/${userCtx.user?.username}`} onClick={toggleDropdown}>Profile</DropdownItem>
+                    <DropdownItem onClick={handleLogoutDropdown}>Logout</DropdownItem>
                   </Dropdown>
                 </div>
               )}
@@ -105,16 +109,16 @@ export default function Navbar() {
           </>
         )}
 
-        {!login && (
+        {!userCtx.isLoading && !userCtx.isAuthenticated && (
           <>
-            <Button typeButton="secondary" href="/login">Login</Button>
-            <Button href="/register">Register</Button>
+            <Button typeButton="secondary" href="/auth/login">Login</Button>
+            <Button href="/auth/register">Register</Button>
           </>
         )}
       </div>
 
-      {login && (
-        <div onClick={handleLogout} className="sm:hidden">
+      {userCtx.user && (
+        <div onClick={handleLogout} className="sm:hidden cursor-pointer">
           <FontAwesomeIcon icon={faSignOutAlt} size="lg" />
         </div>
       )}
